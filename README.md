@@ -5,6 +5,8 @@ It turns documents into evidence cards with exact quotes, source references,
 page numbers, issue maps, meeting questions, refusal notes, and exportable
 packets.
 
+Live demo: [https://sourcedeck.vercel.app](https://sourcedeck.vercel.app)
+
 Tagline:
 
 > The right quote, the right page, the right moment.
