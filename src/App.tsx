@@ -139,7 +139,7 @@ const seedDocuments: SourceDocument[] = [
     title: "December 4 Prior Written Notice",
     type: "Prior Written Notice",
     date: "2025-12-04",
-    author: "Whitehall City Schools",
+    author: "Example District",
     pages: 3,
     exhibit: "Exhibit D",
     tags: ["FAPE", "PWN", "Related Services", "Admissions"],
@@ -190,7 +190,7 @@ const seedEvidence: EvidenceCard[] = [
     documentId: "doc_pwn_dec4",
     page: 2,
     quote:
-      "Because the time he spends at Reach is so abbreviated, related services are not able to be provided at this time.",
+      "Because the time the student spends in the program is so abbreviated, related services are not able to be provided at this time.",
     meaning:
       "The record acknowledges that required related services were not being delivered because access was reduced.",
     strategicUse:
@@ -213,7 +213,7 @@ const seedEvidence: EvidenceCard[] = [
     documentId: "doc_pwn_dec4",
     page: 2,
     quote:
-      "Because of the intensive focus on behavioral supports, the team has not been able to provide Jace support for his academics this year.",
+      "Because of the intensive focus on behavioral supports, the team has not been able to provide the student support for academics this year.",
     meaning:
       "The notice states that academic support was not being provided during the school year.",
     strategicUse:

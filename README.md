@@ -49,6 +49,12 @@ This first build includes:
 - packet exports
 - calibration report
 
+## Sample Data
+
+The included sample records are fictionalized demonstration excerpts. Do not
+commit real education, medical, HR, legal, custody, disability, or private
+advocacy records to a public repository.
+
 ## Run
 
 ```powershell
