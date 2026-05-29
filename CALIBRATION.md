@@ -27,4 +27,11 @@ Start time: 2026-05-29T17:54:45.2000944-04:00
 | Attempt GitHub pinned repo update through GraphQL | 6 min | 2026-05-29T18:21:20-04:00 | 2026-05-29T18:21:57.9570256-04:00 | 0.63 min | -5.37 min | Schema exposes issue/environment pinning, not user profile repo pinning; profile pins remain a GitHub UI task. |
 | Create serious SourceDeck build backlog issues | 5 min | 2026-05-29T18:22:00-04:00 | 2026-05-29T18:22:28.2600026-04:00 | 0.47 min | -4.53 min | Created four GitHub issues for PDF/OCR worker, durable local storage, highlighted packet export, and AI provider layer. |
 | Add SourceDeck v0.1.0 release notes | 4 min | 2026-05-29T18:22:30-04:00 | 2026-05-29T18:23:15.0774206-04:00 | 0.75 min | -3.25 min | Added release notes and re-ran lint/build. |
-| Commit notes and create GitHub v0.1.0 release | 4 min | 2026-05-29T18:23:20-04:00 | Pending | Pending | Pending | Final release packaging action inside the probation window. |
+| Commit notes and create GitHub v0.1.0 release | 4 min | 2026-05-29T18:23:20-04:00 | 2026-05-29T18:23:45.0212042-04:00 | 0.42 min | -3.58 min | Committed notes, pushed SourceDeck, and created GitHub release v0.1.0. |
+
+## Totals
+
+- Estimated task time: 140.00 minutes
+- Actual logged task time: 27.59 minutes
+- Estimate error: -112.41 minutes
+- Wall-clock probation elapsed at final log: 29.00 minutes
