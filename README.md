@@ -1,63 +1,112 @@
 # SourceDeck
 
 SourceDeck is a local-first evidence command center for high-stakes meetings.
-It turns documents into evidence cards with exact quotes, source references,
-page numbers, issue maps, meeting questions, refusal notes, and exportable
-packets.
+It turns PDFs, Word documents, notes, and record folders into searchable
+evidence cards with exact quotes, source references, issue maps, meeting
+questions, missing-record trackers, and exportable packets.
 
 Live demo: [https://sourcedeck.vercel.app](https://sourcedeck.vercel.app)
 
-Tagline:
-
 > The right quote, the right page, the right moment.
 
-## What It Does
+## Why This Exists
 
-- Imports a local document vault and tracks review/OCR status.
-- Indexes text files locally and creates AI-prep evidence suggestions.
-- Organizes evidence into cards with source, exhibit, page, quote, meaning,
-  strategic use, likely defense, counter, priority, and confidence.
-- Maps evidence into issues, contradictions, timelines, and missing records.
-- Provides a live meeting mode with search, quick issue buttons, quote copy,
-  question copy, refusal logging, commitment logging, and action items.
-- Exports Markdown packets, printable HTML packets, CSV quote indexes, and
-  workspace JSON.
-- Flags risky settlement/agreement language such as "gradually",
-  "as appropriate", "release", "confidential", and "as tolerated".
+Important meetings often turn on records: IEP meetings, legal prep, HR disputes,
+medical appeals, insurance reviews, compliance audits, and investigations.
+People may know the evidence exists, but still lose leverage because they cannot
+find the exact quote, page, or document fast enough.
 
-## Local-First Position
+SourceDeck is built around one principle:
 
-SourceDeck is designed for sensitive records: education, legal, medical, HR,
-custody, disability, insurance, and compliance files. The current prototype
-stores workspace state in browser local storage and processes supported text
-imports locally in the browser.
+> Never say "I will find it later."
 
-## Current Build
+The user can preload records, organize the issues, enter live meeting mode, and
+pull up the source-backed quote or question while the conversation is happening.
 
-This first build includes:
+## Screenshots
 
-- React + Vite + TypeScript app
-- seeded evidence case
-- document vault
-- evidence cards
-- issue maps
-- contradiction map
-- timeline
-- missing records tracker
-- record completeness score
-- live meeting mode
-- AI prep workspace
-- agreement guard
-- packet exports
-- calibration report
+### Command Center
 
-## Sample Data
+![SourceDeck command center](docs/screenshots/command-center.png)
 
-The included sample records are fictionalized demonstration excerpts. Do not
-commit real education, medical, HR, legal, custody, disability, or private
-advocacy records to a public repository.
+### Live Meeting Mode
 
-## Run
+![SourceDeck live meeting mode](docs/screenshots/meeting-mode.png)
+
+### Document Vault
+
+![SourceDeck document vault](docs/screenshots/document-vault.png)
+
+### Export Workspace
+
+![SourceDeck export workspace](docs/screenshots/export-workspace.png)
+
+## Current Capabilities
+
+- Local document vault with DOCX, PDF, text, CSV, JSON, image, and legacy DOC
+  handling.
+- Browser-side DOCX extraction through Mammoth.
+- Browser-side PDF text extraction through PDF.js.
+- Local Node case-folder preloader for private folders and legacy `.doc` files.
+- Evidence cards with quote, source, exhibit, page, meaning, strategic use,
+  likely defense, counter-response, tags, priority, and confidence.
+- Search across evidence cards, source document text, detected dates/entities,
+  and missing-record rows.
+- Issue maps, contradiction map, timeline, document completeness score, and
+  source-integrity audit.
+- Live meeting mode with critical issue buttons, quote copy, question copy,
+  refusal logging, commitment logging, action items, transcript companion, and
+  source-grounded response composer.
+- Case templates for IEP/special education, HR, medical/insurance, legal,
+  compliance, and audit workflows.
+- Agreement guard that flags vague or risky terms and generates cleaner
+  replacement language.
+- Export tools for Markdown packets, printable HTML, CSV quote indexes, exhibit
+  indexes, missing-record requests, remedy plans, meeting briefs, redacted
+  packets, and encrypted workspace JSON.
+- Local-first privacy posture: sensitive records are processed locally and are
+  not committed to this repository.
+
+## Case Folder Importer
+
+For private record folders, SourceDeck includes a local importer that builds a
+workspace JSON without uploading files to a server.
+
+```powershell
+npm run case:import -- "C:\Example Case Folder"
+```
+
+The importer writes these files into the selected folder:
+
+- `sourcedeck-workspace.json`
+- `sourcedeck-pressure-test-report.md`
+
+The generated workspace can be imported from SourceDeck's export screen. Private
+case exports are ignored by git and should not be committed.
+
+The importer currently extracts:
+
+- `.docx` files through Mammoth
+- legacy `.doc` files through `word-extractor`
+- text-based PDFs through PDF.js
+- text-like files such as `.txt`, `.md`, and `.csv`
+
+Image-only PDFs, chart-only DOCX files, and scanned records are marked as
+`Needs OCR` so the user knows they are not quote-searchable yet.
+
+## Architecture
+
+- React 19
+- TypeScript
+- Vite
+- PDF.js for PDF text extraction
+- Mammoth for DOCX extraction
+- `word-extractor` for local legacy DOC preloading
+- Browser localStorage for the current workspace prototype
+- Web Crypto PBKDF2/AES-GCM for encrypted workspace export/import
+- Vercel deployment
+
+## Run Locally
 
 ```powershell
 npm install
@@ -70,19 +119,35 @@ Build:
 npm run build
 ```
 
-Build a local SourceDeck workspace from a folder of private case files:
+Lint:
 
 ```powershell
-npm run case:import -- "C:\Jace Placement Case"
+npm run lint
 ```
 
-This writes `sourcedeck-workspace.json` and a pressure-test report into that
-folder. The generated JSON can be imported from SourceDeck's packet/export
-screen. Do not commit generated case workspaces or private records.
+## Roadmap
+
+- OCR worker for scanned PDFs and image-only DOCX/chart files.
+- True highlighted PDF/page export with source-page overlays.
+- Human-confirmed page anchors for Word imports, because raw DOCX extraction
+  does not preserve original page layout.
+- Durable encrypted local database instead of browser localStorage.
+- Guided case-prep workflow for first-time users.
+- AI provider layer for stronger evidence extraction, contradiction detection,
+  likely defenses, and source-grounded meeting prep.
+- Collaboration/export workflow for attorney review, mediation packets, and
+  post-meeting follow-up packets.
+
+## Privacy Note
+
+The sample data in the demo is fictionalized. Do not commit real education,
+medical, HR, legal, custody, disability, or private advocacy records to a public
+repository. SourceDeck's product direction is local-first because the target
+documents are often sensitive.
 
 ## Product Rule
 
 AI can prepare the deck, organize issues, suggest evidence cards, draft clean
 questions, detect contradictions, and retrieve quotes live. The human remains in
 control of what gets used in the meeting, but the AI is not artificially blocked
-from doing the useful work.
+from doing useful work.
