@@ -51,8 +51,11 @@ type SourceDocument = {
   warning?: string;
   fileName?: string;
   extractedText?: string;
+  pageTexts?: Array<{ page: number; text: string }>;
   textChars?: number;
   importedAt?: string;
+  detectedDates?: string[];
+  detectedEntities?: string[];
 };
 
 type EvidenceCard = {
@@ -114,6 +117,16 @@ type MeetingNote = {
   kind: "Note" | "Refusal" | "Commitment" | "Action";
 };
 
+type AuditRow = {
+  id: string;
+  severity: Priority;
+  title: string;
+  detail: string;
+  targetView: View;
+  evidenceId?: string;
+  documentId?: string;
+};
+
 type PrepSuggestion = {
   id: string;
   title: string;
@@ -124,6 +137,41 @@ type PrepSuggestion = {
   confidence: number;
   documentId?: string;
   page?: number;
+};
+
+type CaseTemplate = {
+  id: string;
+  title: string;
+  meetingType: string;
+  issues: Array<{ title: string; description: string }>;
+  missingRecords: Array<{ requested: string; whyItMatters: string; followUp: string }>;
+};
+
+type WorkspaceSnapshot = Partial<{
+  caseProfile: CaseProfile;
+  documents: SourceDocument[];
+  evidence: EvidenceCard[];
+  issues: Issue[];
+  timeline: TimelineEntry[];
+  missingRecords: MissingRecord[];
+  meetingNotes: MeetingNote[];
+}>;
+
+type EncryptedWorkspacePayload = {
+  format: "sourcedeck.encrypted.v1";
+  kdf: "PBKDF2-SHA256";
+  iterations: number;
+  salt: string;
+  iv: string;
+  ciphertext: string;
+  createdAt: string;
+};
+
+type CaseProfile = {
+  name: string;
+  role: string;
+  objective: string;
+  meetingDate: string;
 };
 
 const priorityRank: Record<Priority, number> = {
@@ -408,6 +456,13 @@ const seedMissingRecords: MissingRecord[] = [
   },
 ];
 
+const seedCaseProfile: CaseProfile = {
+  name: "Example Advocacy Case",
+  role: "Parent / advocate",
+  objective: "Anchor the meeting in the record and leave with written commitments.",
+  meetingDate: new Date().toISOString().slice(0, 10),
+};
+
 const meetingTypes = [
   "IEP meeting",
   "Mediation",
@@ -417,6 +472,144 @@ const meetingTypes = [
   "Board meeting",
   "Audit review",
   "Settlement review",
+];
+
+const caseTemplates: CaseTemplate[] = [
+  {
+    id: "iep",
+    title: "IEP / special education",
+    meetingType: "IEP meeting",
+    issues: [
+      {
+        title: "Services promised vs services delivered",
+        description: "Compare the plan's required services against attendance, service logs, and written notices.",
+      },
+      {
+        title: "Access reduction and compensatory remedy",
+        description: "Track whether reduced access caused non-delivery and what remedy is being offered.",
+      },
+    ],
+    missingRecords: [
+      {
+        requested: "Service-minute logs",
+        whyItMatters: "Needed to verify whether IEP services were actually delivered.",
+        followUp: "Request rolling production or written refusal.",
+      },
+      {
+        requested: "Prior written notices",
+        whyItMatters: "Needed to determine what decisions were made, when, and why.",
+        followUp: "Ask for every PWN tied to placement, schedule, or service changes.",
+      },
+    ],
+  },
+  {
+    id: "hr",
+    title: "HR / workplace dispute",
+    meetingType: "HR meeting",
+    issues: [
+      {
+        title: "Policy promised vs policy followed",
+        description: "Compare written policy, HR actions, supervisor communications, and timeline.",
+      },
+      {
+        title: "Retaliation or inconsistent treatment",
+        description: "Track protected activity, adverse actions, comparators, and explanations.",
+      },
+    ],
+    missingRecords: [
+      {
+        requested: "HR complaint file",
+        whyItMatters: "Needed to prove what was reported and how the company responded.",
+        followUp: "Request complaint, investigator notes, and closure records.",
+      },
+      {
+        requested: "Performance history",
+        whyItMatters: "Needed to compare stated reasons with prior documented performance.",
+        followUp: "Request reviews, warnings, goals, and manager notes.",
+      },
+    ],
+  },
+  {
+    id: "medical",
+    title: "Medical / insurance appeal",
+    meetingType: "Medical consult",
+    issues: [
+      {
+        title: "Documented need vs denied treatment",
+        description: "Compare diagnosis, symptoms, provider recommendations, policy language, and denial reasons.",
+      },
+      {
+        title: "Timeline of symptoms and decisions",
+        description: "Show what was known when, who reviewed it, and what changed.",
+      },
+    ],
+    missingRecords: [
+      {
+        requested: "Denial rationale and criteria",
+        whyItMatters: "Needed to challenge the stated basis for denial.",
+        followUp: "Request policy criteria, reviewer credentials, and appeal deadline.",
+      },
+      {
+        requested: "Complete visit notes",
+        whyItMatters: "Needed to anchor symptoms, diagnosis, and treatment history.",
+        followUp: "Request visit notes, labs, imaging, and provider messages.",
+      },
+    ],
+  },
+  {
+    id: "legal",
+    title: "Legal / attorney prep",
+    meetingType: "Legal consult",
+    issues: [
+      {
+        title: "Strongest admissions",
+        description: "Find statements that admit responsibility, knowledge, breach, delay, or non-performance.",
+      },
+      {
+        title: "Contradictions and missing records",
+        description: "Map conflicts across contracts, correspondence, pleadings, and produced records.",
+      },
+    ],
+    missingRecords: [
+      {
+        requested: "Complete correspondence set",
+        whyItMatters: "Needed to prevent cherry-picked timelines.",
+        followUp: "Request email threads, attachments, messages, and metadata where available.",
+      },
+      {
+        requested: "Signed agreements and amendments",
+        whyItMatters: "Needed to prove obligations and changes.",
+        followUp: "Request executed versions, change orders, addenda, and notices.",
+      },
+    ],
+  },
+  {
+    id: "compliance",
+    title: "Compliance / audit review",
+    meetingType: "Audit review",
+    issues: [
+      {
+        title: "Requirement vs evidence of compliance",
+        description: "Tie each requirement to the exact record proving compliance or gap.",
+      },
+      {
+        title: "Owner, approval, and remediation trail",
+        description: "Track who approved what, when issues were found, and how they were closed.",
+      },
+    ],
+    missingRecords: [
+      {
+        requested: "Control evidence",
+        whyItMatters: "Needed to prove the control operated during the review period.",
+        followUp: "Request logs, screenshots, approvals, and exception reports.",
+      },
+      {
+        requested: "Remediation records",
+        whyItMatters: "Needed to verify corrective action and closure.",
+        followUp: "Request owner, deadline, proof of completion, and retest evidence.",
+      },
+    ],
+  },
 ];
 
 const requiredRecordTypes = [
@@ -480,18 +673,121 @@ function compactDate(value: string) {
   }).format(new Date(`${value}T00:00:00`));
 }
 
-function readFileText(file: File) {
+type ProcessedFile = {
+  extractedText: string;
+  pageTexts: Array<{ page: number; text: string }>;
+  pages: number;
+  status: SourceDocument["status"];
+  warning: string;
+};
+
+const plainTextExtensions = new Set(["txt", "md", "csv", "json", "log", "html"]);
+
+function detectDates(text: string) {
+  const matches = text.match(
+    /\b(?:\d{4}-\d{2}-\d{2}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2},?\s+\d{4}|\d{1,2}\/\d{1,2}\/\d{2,4})\b/gi,
+  );
+  return Array.from(new Set(matches ?? [])).slice(0, 16);
+}
+
+function detectEntities(text: string) {
+  const matches = text.match(/\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,4}\b/g);
+  const noisy = new Set([
+    "SourceDeck Evidence",
+    "Prior Written Notice",
+    "Because",
+    "The",
+  ]);
+  return Array.from(new Set(matches ?? []))
+    .filter((item) => !noisy.has(item))
+    .slice(0, 18);
+}
+
+function readPlainTextFile(file: File) {
   return new Promise<string>((resolve) => {
-    const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
-    if (!["txt", "md", "csv", "json", "log", "html"].includes(ext)) {
-      resolve("");
-      return;
-    }
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result ?? ""));
     reader.onerror = () => resolve("");
     reader.readAsText(file);
   });
+}
+
+async function readPdfFile(file: File): Promise<ProcessedFile> {
+  const [{ GlobalWorkerOptions, getDocument }, { default: pdfWorkerSrc }] =
+    await Promise.all([
+      import("pdfjs-dist"),
+      import("pdfjs-dist/build/pdf.worker.mjs?url"),
+    ]);
+  GlobalWorkerOptions.workerSrc = pdfWorkerSrc;
+  const data = new Uint8Array(await file.arrayBuffer());
+  const pdf = await getDocument({ data }).promise;
+  const pageTexts: Array<{ page: number; text: string }> = [];
+  for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+    const page = await pdf.getPage(pageNumber);
+    const content = await page.getTextContent();
+    const text = content.items
+      .map((item) => ("str" in item ? item.str : ""))
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
+    pageTexts.push({ page: pageNumber, text });
+  }
+  const extractedText = pageTexts.map((page) => page.text).join("\n\n");
+  return {
+    extractedText,
+    pageTexts,
+    pages: pdf.numPages,
+    status: extractedText ? "Indexed" : "Needs OCR",
+    warning: extractedText
+      ? `${pdf.numPages} PDF pages indexed locally.`
+      : "PDF has no extractable text; OCR is required.",
+  };
+}
+
+async function readDocxFile(file: File): Promise<ProcessedFile> {
+  const { default: mammoth } = await import("mammoth/mammoth.browser");
+  const result = await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
+  const extractedText = result.value.replace(/\s+\n/g, "\n").trim();
+  return {
+    extractedText,
+    pageTexts: extractedText ? [{ page: 1, text: extractedText }] : [],
+    pages: extractedText ? 1 : 0,
+    status: extractedText ? "Indexed" : "Needs review",
+    warning: extractedText
+      ? `${extractedText.length.toLocaleString()} DOCX characters indexed locally.`
+      : "DOCX imported but no text was extracted.",
+  };
+}
+
+async function processFile(file: File): Promise<ProcessedFile> {
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+  if (ext === "pdf") {
+    return readPdfFile(file);
+  }
+  if (ext === "docx") {
+    return readDocxFile(file);
+  }
+  if (plainTextExtensions.has(ext)) {
+    const extractedText = await readPlainTextFile(file);
+    return {
+      extractedText,
+      pageTexts: extractedText ? [{ page: 1, text: extractedText }] : [],
+      pages: extractedText ? 1 : 0,
+      status: extractedText ? "Indexed" : "Needs review",
+      warning: extractedText
+        ? `${extractedText.length.toLocaleString()} text characters indexed locally.`
+        : "Text-like file imported but no text was extracted.",
+    };
+  }
+  return {
+    extractedText: "",
+    pageTexts: [],
+    pages: 0,
+    status: ["png", "jpg", "jpeg", "tif", "tiff"].includes(ext) ? "Needs OCR" : "Needs review",
+    warning: ["png", "jpg", "jpeg", "tif", "tiff"].includes(ext)
+      ? "Image document queued for OCR."
+      : "Metadata imported. Add a processor for this file type.",
+  };
 }
 
 function suggestFromText(
@@ -579,8 +875,59 @@ function quoteContext(text: string | undefined, quote: string) {
   return normalizedText.slice(start, end);
 }
 
+function normalizeDetectedDate(value: string) {
+  const parsed = Date.parse(value);
+  if (!Number.isNaN(parsed)) return new Date(parsed).toISOString().slice(0, 10);
+  const year = value.match(/\b(19|20)\d{2}\b/)?.[0];
+  return year ? `${year}-01-01` : new Date().toISOString().slice(0, 10);
+}
+
+function bytesToBase64(bytes: Uint8Array) {
+  let binary = "";
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+  return btoa(binary);
+}
+
+function base64ToBytes(value: string) {
+  return Uint8Array.from(atob(value), (char) => char.charCodeAt(0));
+}
+
+function toArrayBuffer(bytes: Uint8Array) {
+  const buffer = new ArrayBuffer(bytes.byteLength);
+  new Uint8Array(buffer).set(bytes);
+  return buffer;
+}
+
+async function deriveWorkspaceKey(passphrase: string, salt: Uint8Array, iterations: number) {
+  const baseKey = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(passphrase),
+    "PBKDF2",
+    false,
+    ["deriveKey"],
+  );
+  return crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt: toArrayBuffer(salt),
+      iterations,
+      hash: "SHA-256",
+    },
+    baseKey,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["encrypt", "decrypt"],
+  );
+}
+
 function App() {
   const [documents, setDocuments] = useLocalState("sourcedeck.documents", seedDocuments);
+  const [caseProfile, setCaseProfile] = useLocalState(
+    "sourcedeck.caseProfile",
+    seedCaseProfile,
+  );
   const [evidence, setEvidence] = useLocalState("sourcedeck.evidence", seedEvidence);
   const [issues, setIssues] = useLocalState("sourcedeck.issues", seedIssues);
   const [timeline, setTimeline] = useLocalState("sourcedeck.timeline", seedTimeline);
@@ -595,6 +942,7 @@ function App() {
   const [view, setView] = useState<View>("command");
   const [query, setQuery] = useState("");
   const [activeIssueId, setActiveIssueId] = useState(issues[0]?.id ?? "");
+  const [activeDocumentId, setActiveDocumentId] = useState(documents[0]?.id ?? "");
   const [selectedEvidenceId, setSelectedEvidenceId] = useState(evidence[0]?.id ?? "");
   const [packetIds, setPacketIds] = useLocalState<string[]>("sourcedeck.packetIds", [
     "ev_related_services",
@@ -603,17 +951,30 @@ function App() {
   const [meetingType, setMeetingType] = useState(meetingTypes[0]);
   const [noteDraft, setNoteDraft] = useState("");
   const [speakerDraft, setSpeakerDraft] = useState("Other party");
+  const [transcriptDraft, setTranscriptDraft] = useState("");
+  const [liveClaimDraft, setLiveClaimDraft] = useState("");
+  const [composedResponse, setComposedResponse] = useState("");
   const [agreementText, setAgreementText] = useState(
     "Services will gradually increase as appropriate.",
   );
   const [prepText, setPrepText] = useState("");
   const [prepSuggestions, setPrepSuggestions] = useState<PrepSuggestion[]>([]);
+  const [importStatus, setImportStatus] = useState("");
+  const [voiceStatus, setVoiceStatus] = useState("Voice idle");
+  const [isListening, setIsListening] = useState(false);
+  const [workspacePassphrase, setWorkspacePassphrase] = useState("");
+  const [privacyStatus, setPrivacyStatus] = useState("");
+  const [redactionTerms, setRedactionTerms] = useLocalState(
+    "sourcedeck.redactionTerms",
+    "Student Name\nExample District\nParent Name",
+  );
   const [meetingStartedAt, setMeetingStartedAt] = useLocalState<string | null>(
     "sourcedeck.meetingStartedAt",
     null,
   );
   const [clockTick, setClockTick] = useState(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const speechRecognitionRef = useRef<SpeechRecognition | null>(null);
   const [manualCard, setManualCard] = useState({
     title: "",
     quote: "",
@@ -630,6 +991,8 @@ function App() {
 
   const selectedEvidence = evidence.find((card) => card.id === selectedEvidenceId) ?? evidence[0];
   const activeIssue = issues.find((issue) => issue.id === activeIssueId) ?? issues[0];
+  const activeDocument =
+    documents.find((document) => document.id === activeDocumentId) ?? documents[0];
   const meetingElapsedMs = meetingStartedAt
     ? Math.max(0, clockTick - new Date(meetingStartedAt).getTime())
     : 0;
@@ -640,6 +1003,10 @@ function App() {
     const id = window.setInterval(() => setClockTick(Date.now()), 1000);
     return () => window.clearInterval(id);
   }, [meetingStartedAt]);
+
+  useEffect(() => {
+    return () => speechRecognitionRef.current?.abort();
+  }, []);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -693,6 +1060,42 @@ function App() {
         .includes(searchCorpus);
     });
   }, [documentById, evidence, searchCorpus]);
+
+  const filteredDocuments = useMemo(() => {
+    if (!searchCorpus) return documents;
+    return documents.filter((document) =>
+      [
+        document.title,
+        document.type,
+        document.author,
+        document.exhibit,
+        document.tags.join(" "),
+        document.extractedText,
+        document.detectedDates?.join(" "),
+        document.detectedEntities?.join(" "),
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+        .includes(searchCorpus),
+    );
+  }, [documents, searchCorpus]);
+
+  const filteredMissingRecords = useMemo(() => {
+    if (!searchCorpus) return missingRecords;
+    return missingRecords.filter((record) =>
+      [
+        record.requested,
+        record.responsibleParty,
+        record.relatedIssue,
+        record.whyItMatters,
+        record.followUp,
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(searchCorpus),
+    );
+  }, [missingRecords, searchCorpus]);
 
   const criticalEvidence = evidence
     .filter((card) => card.priority === "Critical" || card.priority === "High")
@@ -798,9 +1201,91 @@ function App() {
     return rows.slice(0, 8);
   }, [evidence]);
 
+  const sourceAudit = useMemo(() => {
+    const rows: AuditRow[] = [];
+
+    documents.forEach((document) => {
+      if (document.status !== "Indexed") {
+        rows.push({
+          id: `doc_${document.id}`,
+          severity: document.status === "Needs OCR" ? "Critical" : "High",
+          title: `${document.exhibit} needs source review`,
+          detail: document.warning ?? `${document.title} is marked ${document.status}.`,
+          targetView: "documents",
+          documentId: document.id,
+        });
+      }
+    });
+
+    evidence.forEach((card) => {
+      const source = documentById.get(card.documentId);
+      if (!source) {
+        rows.push({
+          id: `missing_source_${card.id}`,
+          severity: "Critical",
+          title: `${card.title} is not linked to a document`,
+          detail: "Evidence cards need a source document before they are meeting-ready.",
+          targetView: "evidence",
+          evidenceId: card.id,
+        });
+      }
+      if (!card.quote.trim() || card.quote.length < 24) {
+        rows.push({
+          id: `weak_quote_${card.id}`,
+          severity: "High",
+          title: `${card.title} needs a stronger exact quote`,
+          detail: "The card should carry the quote someone can read out loud in the room.",
+          targetView: "evidence",
+          evidenceId: card.id,
+        });
+      }
+      if (!card.page) {
+        rows.push({
+          id: `missing_page_${card.id}`,
+          severity: "High",
+          title: `${card.title} is missing a page anchor`,
+          detail: "Add the page before using this as a formal exhibit reference.",
+          targetView: "evidence",
+          evidenceId: card.id,
+        });
+      }
+      if (card.confidence < 70) {
+        rows.push({
+          id: `low_confidence_${card.id}`,
+          severity: "Medium",
+          title: `${card.title} has low confidence`,
+          detail: `Confidence is ${card.confidence}%. Validate the quote and source context.`,
+          targetView: "evidence",
+          evidenceId: card.id,
+        });
+      }
+    });
+
+    missingRecords
+      .filter((record) => record.status === "Missing")
+      .forEach((record) => {
+        rows.push({
+          id: `missing_record_${record.id}`,
+          severity: "Medium",
+          title: `${record.requested} still missing`,
+          detail: record.followUp,
+          targetView: "timeline",
+        });
+      });
+
+    return rows.sort(
+      (left, right) => priorityRank[right.severity] - priorityRank[left.severity],
+    );
+  }, [documents, documentById, evidence, missingRecords]);
+
   function buildPacketMarkdown(cards = packetEvidence, packetTitle = "SourceDeck Evidence Packet") {
     const lines = [
       `# ${packetTitle}`,
+      "",
+      `Case: ${caseProfile.name}`,
+      `Role: ${caseProfile.role}`,
+      `Objective: ${caseProfile.objective}`,
+      `Meeting date: ${caseProfile.meetingDate || "Not set"}`,
       "",
       `Generated: ${new Date().toLocaleString()}`,
       `Meeting type: ${meetingType}`,
@@ -860,6 +1345,150 @@ function App() {
     return lines.join("\n");
   }
 
+  function redactContent(content: string) {
+    const terms = redactionTerms
+      .split(/\n|,/)
+      .map((term) => term.trim())
+      .filter(Boolean)
+      .sort((left, right) => right.length - left.length);
+    let redacted = content
+      .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[REDACTED EMAIL]")
+      .replace(/\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g, "[REDACTED PHONE]")
+      .replace(/\b\d{3}-\d{2}-\d{4}\b/g, "[REDACTED ID]");
+    terms.forEach((term) => {
+      redacted = redacted.replaceAll(term, "[REDACTED]");
+    });
+    return redacted;
+  }
+
+  function createIssueFromSearch() {
+    const title = query.trim() || "Search-built issue";
+    const evidenceIds = filteredEvidence.slice(0, 8).map((card) => card.id);
+    if (!evidenceIds.length) return;
+    const issue: Issue = {
+      id: makeId("issue"),
+      title,
+      description: `Issue assembled from ${evidenceIds.length} evidence card${
+        evidenceIds.length === 1 ? "" : "s"
+      } matching "${title}".`,
+      evidenceIds,
+      status: "Open",
+      meetingPriority: issues.length + 1,
+    };
+    setIssues((current) => [issue, ...current]);
+    setActiveIssueId(issue.id);
+    setPacketIds((current) => Array.from(new Set([...evidenceIds, ...current])));
+    setView("issues");
+  }
+
+  function applyCaseTemplate(template: CaseTemplate) {
+    const createdIssues: Issue[] = template.issues.map((issue, index) => ({
+      id: makeId("issue"),
+      title: issue.title,
+      description: issue.description,
+      evidenceIds: filteredEvidence.slice(0, 4).map((card) => card.id),
+      status: "Open",
+      meetingPriority: index + 1,
+    }));
+    const createdRecords: MissingRecord[] = template.missingRecords.map((record) => ({
+      id: makeId("mr"),
+      requested: record.requested,
+      dateRequested: new Date().toISOString().slice(0, 10),
+      responsibleParty: "To assign",
+      status: "Missing",
+      relatedIssue: template.title,
+      whyItMatters: record.whyItMatters,
+      followUp: record.followUp,
+    }));
+    setMeetingType(template.meetingType);
+    setIssues((current) => [...createdIssues, ...current]);
+    setMissingRecords((current) => [...createdRecords, ...current]);
+    setActiveIssueId(createdIssues[0]?.id ?? activeIssueId);
+  }
+
+  function startVoiceQuery() {
+    const Recognition = window.SpeechRecognition ?? window.webkitSpeechRecognition;
+    if (!Recognition) {
+      setVoiceStatus("Voice search unavailable in this browser. Type the same query instead.");
+      return;
+    }
+
+    if (isListening) {
+      speechRecognitionRef.current?.stop();
+      setIsListening(false);
+      setVoiceStatus("Voice search stopped.");
+      return;
+    }
+
+    const recognition = new Recognition();
+    speechRecognitionRef.current = recognition;
+    recognition.lang = "en-US";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0]?.[0]?.transcript.trim();
+      if (!transcript) {
+        setVoiceStatus("No speech captured. Try again or type the query.");
+        return;
+      }
+      const transcriptLower = transcript.toLowerCase();
+      const firstMatch = [...evidence]
+        .sort(
+          (left, right) =>
+            priorityRank[right.priority] - priorityRank[left.priority] ||
+            right.confidence - left.confidence,
+        )
+        .find((card) => {
+          const doc = documentById.get(card.documentId);
+          return [
+            card.title,
+            card.category,
+            card.quote,
+            card.meaning,
+            card.strategicUse,
+            card.question,
+            card.likelyDefense,
+            card.counter,
+            card.tags.join(" "),
+            doc?.title,
+            doc?.exhibit,
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase()
+            .includes(transcriptLower);
+        });
+      setQuery(transcript);
+      if (firstMatch) setSelectedEvidenceId(firstMatch.id);
+      setView("meeting");
+      setVoiceStatus(`Searching: "${transcript}"`);
+      window.setTimeout(() => searchInputRef.current?.focus(), 0);
+    };
+
+    recognition.onerror = (event) => {
+      setVoiceStatus(`Voice error: ${event.error || "unknown"}. Type the query instead.`);
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+      speechRecognitionRef.current = null;
+    };
+
+    try {
+      setIsListening(true);
+      setVoiceStatus("Listening for a meeting query...");
+      recognition.start();
+    } catch (error) {
+      setIsListening(false);
+      setVoiceStatus(
+        `Voice search could not start: ${error instanceof Error ? error.message : "unknown error"}`,
+      );
+    }
+  }
+
   function buildPacketCsv(cards = packetEvidence) {
     const header = [
       "title",
@@ -887,6 +1516,225 @@ function App() {
       ].map((cell) => `"${cell.replaceAll('"', '""')}"`);
     });
     return [header.join(","), ...rows.map((row) => row.join(","))].join("\n");
+  }
+
+  function buildExhibitIndexMarkdown() {
+    const lines = [
+      "# SourceDeck Exhibit Index",
+      "",
+      `Case: ${caseProfile.name}`,
+      `Generated: ${new Date().toLocaleString()}`,
+      "",
+    ];
+    documents
+      .slice()
+      .sort((left, right) => left.exhibit.localeCompare(right.exhibit))
+      .forEach((document) => {
+        const linkedCards = evidence.filter((card) => card.documentId === document.id);
+        lines.push(
+          `## ${document.exhibit} - ${document.title}`,
+          "",
+          `Type: ${document.type}`,
+          `Date: ${document.date}`,
+          `Author/source: ${document.author}`,
+          `Pages: ${document.pages || "Unknown"}`,
+          `Status: ${document.status}`,
+          `Tags: ${document.tags.join(", ") || "None"}`,
+          `Linked evidence cards: ${linkedCards.length}`,
+          "",
+        );
+        linkedCards.forEach((card) => {
+          lines.push(
+            `- Page ${card.page || "pending"} / ${card.priority}: ${card.title} - "${card.quote}"`,
+          );
+        });
+        lines.push("");
+      });
+    return lines.join("\n");
+  }
+
+  function buildExhibitIndexCsv() {
+    const header = [
+      "exhibit",
+      "title",
+      "type",
+      "date",
+      "author",
+      "pages",
+      "status",
+      "tags",
+      "linkedEvidenceCards",
+    ];
+    const rows = documents.map((document) =>
+      [
+        document.exhibit,
+        document.title,
+        document.type,
+        document.date,
+        document.author,
+        String(document.pages || ""),
+        document.status,
+        document.tags.join("; "),
+        String(evidence.filter((card) => card.documentId === document.id).length),
+      ].map((cell) => `"${cell.replaceAll('"', '""')}"`),
+    );
+    return [header.join(","), ...rows.map((row) => row.join(","))].join("\n");
+  }
+
+  function buildMissingRecordRequest() {
+    const openRecords = missingRecords.filter((record) => record.status !== "Produced");
+    const lines = [
+      `Subject: Record request for ${caseProfile.name}`,
+      "",
+      "Please produce the records listed below, or provide a written response identifying any records that do not exist, are being withheld, or require additional time to produce.",
+      "",
+      `Case objective: ${caseProfile.objective}`,
+      `Meeting date: ${caseProfile.meetingDate || "Not set"}`,
+      "",
+    ];
+    openRecords.forEach((record, index) => {
+      lines.push(
+        `${index + 1}. ${record.requested}`,
+        `   Responsible party: ${record.responsibleParty}`,
+        `   Related issue: ${record.relatedIssue}`,
+        `   Why it matters: ${record.whyItMatters}`,
+        `   Requested before: ${record.dateRequested}`,
+        `   Follow-up needed: ${record.followUp}`,
+        "",
+      );
+    });
+    lines.push(
+      "If any requested item will not be produced, please identify the decision-maker, the reason, and the written basis for that refusal.",
+    );
+    return lines.join("\n");
+  }
+
+  function buildAgreementRevision() {
+    const issueTitle = activeIssue?.title ?? "the identified issues";
+    const lines = [
+      `Proposed replacement terms for ${caseProfile.name}`,
+      "",
+      `1. Scope. This agreement resolves only the following issue unless another issue is named in writing: ${issueTitle}.`,
+      "2. Responsible party. A named responsible party will own each commitment and provide written status updates.",
+      "3. Start date. Services, access, production, or payment commitments begin on a date-certain schedule, not when deemed appropriate.",
+      "4. Measurable commitment. Each service or remedy must state minutes, frequency, duration, location, and provider when applicable.",
+      "5. Review date. The parties will reconvene or exchange written status by a specific date to verify implementation.",
+      "6. Failure fallback. If the named provider or placement cannot implement the commitment, the responsible party will identify an alternative within five business days.",
+      "7. No broad waiver. No release, confidentiality, or resolved-all-issues language applies beyond the specifically named issue and remedy.",
+      "8. Written refusal. Any refusal to provide a requested record, service, or remedy must identify the decision-maker, data relied on, and written basis.",
+      "",
+      "Detected language to replace:",
+    ];
+    if (agreementRisks.length === 0) {
+      lines.push("- No built-in risk phrase detected; still confirm dates, owners, measurements, and fallback terms.");
+    } else {
+      agreementRisks.forEach((risk) => {
+        lines.push(`- "${risk.phrase}": ${risk.fix}`);
+      });
+    }
+    return lines.join("\n");
+  }
+
+  function buildRemedyPlan() {
+    const issueCards =
+      activeIssue?.evidenceIds
+        .map((id) => evidence.find((card) => card.id === id))
+        .filter((card): card is EvidenceCard => Boolean(card)) ?? packetEvidence;
+    const relatedGaps = missingRecords.filter((record) =>
+      `${record.relatedIssue} ${record.whyItMatters}`
+        .toLowerCase()
+        .includes((activeIssue?.title ?? "").split(" ")[0]?.toLowerCase() ?? ""),
+    );
+    const lines = [
+      `# Proposed Outcome - ${activeIssue?.title ?? "Selected Issue"}`,
+      "",
+      `Case: ${caseProfile.name}`,
+      `Objective: ${caseProfile.objective}`,
+      "",
+      "## Record Basis",
+    ];
+    issueCards.slice(0, 8).forEach((card) => {
+      const source = documentById.get(card.documentId);
+      lines.push(
+        `- ${source?.exhibit ?? "Unlabeled"} page ${card.page || "pending"}: ${card.quote}`,
+      );
+    });
+    lines.push(
+      "",
+      "## Requested Outcome",
+      "- State the exact remedy, service, access, record production, payment, or corrective action being requested.",
+      "- Assign a named owner and implementation deadline.",
+      "- Define how completion will be verified in writing.",
+      "- Preserve the right to pursue unresolved issues not expressly named.",
+      "",
+      "## Verification Terms",
+      "- Written confirmation of the decision-maker and authority.",
+      "- Source documents or logs supporting any disputed position.",
+      "- Date-certain review point if implementation depends on future conditions.",
+      "- Written refusal if any requested remedy or record is denied.",
+      "",
+      "## Missing Records To Resolve First",
+    );
+    (relatedGaps.length ? relatedGaps : missingRecords.filter((record) => record.status !== "Produced"))
+      .slice(0, 8)
+      .forEach((record) => {
+        lines.push(`- ${record.requested}: ${record.followUp}`);
+      });
+    return lines.join("\n");
+  }
+
+  function buildMeetingBrief() {
+    const lines = [
+      "# SourceDeck Meeting Brief",
+      "",
+      `Case: ${caseProfile.name}`,
+      `Role: ${caseProfile.role}`,
+      `Meeting type: ${meetingType}`,
+      `Objective: ${caseProfile.objective}`,
+      `Meeting date: ${caseProfile.meetingDate || "Not set"}`,
+      "",
+      "## Opening Statement",
+      "I want to keep this discussion anchored in the written record. For each disputed point, I will identify the source document, page, exact quote, and the question that needs a clear answer.",
+      "",
+      "## Key Issues",
+    ];
+    issues
+      .slice()
+      .sort((left, right) => left.meetingPriority - right.meetingPriority)
+      .slice(0, 8)
+      .forEach((issue) => {
+        lines.push(`- ${issue.title}: ${issue.description}`);
+      });
+    lines.push("", "## Must-Ask Questions");
+    criticalEvidence.slice(0, 8).forEach((card) => {
+      const source = documentById.get(card.documentId);
+      lines.push(
+        `- ${card.question} (${source?.exhibit ?? "Unlabeled"}, page ${
+          card.page || "pending"
+        })`,
+      );
+    });
+    lines.push("", "## Missing Records To Request");
+    missingRecords
+      .filter((record) => record.status !== "Produced")
+      .slice(0, 8)
+      .forEach((record) => {
+        lines.push(`- ${record.requested}: ${record.followUp}`);
+      });
+    lines.push("", "## Agreement Guardrails");
+    if (agreementRisks.length) {
+      agreementRisks.forEach((risk) => {
+        lines.push(`- Watch "${risk.phrase}": ${risk.risk} ${risk.fix}`);
+      });
+    } else {
+      lines.push("- Do not sign until deadlines, owners, measurements, waiver scope, and fallback terms are clear.");
+    }
+    lines.push("", "## Packet Items");
+    packetEvidence.forEach((card) => {
+      const source = documentById.get(card.documentId);
+      lines.push(`- ${source?.exhibit ?? "Unlabeled"} page ${card.page}: ${card.title}`);
+    });
+    return lines.join("\n");
   }
 
   function buildPacketHtml(cards = packetEvidence) {
@@ -919,6 +1767,8 @@ function App() {
 </head>
 <body>
   <h1>SourceDeck Evidence Packet</h1>
+  <p><strong>Case:</strong> ${caseProfile.name}</p>
+  <p><strong>Objective:</strong> ${caseProfile.objective}</p>
   <p>Generated ${new Date().toLocaleString()} for ${meetingType}</p>
   ${body}
 </body>
@@ -927,34 +1777,40 @@ function App() {
 
   async function addFiles(files: FileList | null) {
     if (!files?.length) return;
+    setImportStatus(`Processing ${files.length} file${files.length === 1 ? "" : "s"}...`);
     const imported = await Promise.all(
       Array.from(files).map(async (file, index): Promise<SourceDocument> => {
       const ext = file.name.split(".").pop()?.toUpperCase() || "File";
-      const extractedText = await readFileText(file);
+      let processed: ProcessedFile;
+      try {
+        processed = await processFile(file);
+      } catch (error) {
+        processed = {
+          extractedText: "",
+          pageTexts: [],
+          pages: 0,
+          status: "Needs review",
+          warning: `Import processor failed: ${error instanceof Error ? error.message : "unknown error"}`,
+        };
+      }
       return {
         id: makeId("doc"),
         title: file.name.replace(/\.[^.]+$/, ""),
         type: ext,
         date: new Date(file.lastModified || Date.now()).toISOString().slice(0, 10),
         author: "Imported file",
-        pages: ext === "PDF" ? 1 : 0,
+        pages: processed.pages,
         exhibit: `Imported ${documents.length + index + 1}`,
         tags: ["Imported", ext],
-        status: extractedText
-          ? "Indexed"
-          : ext === "PNG" || ext === "JPG" || ext === "JPEG" || ext === "PDF"
-            ? "Needs OCR"
-            : "Needs review",
-        warning:
-          extractedText
-            ? `${extractedText.length.toLocaleString()} text characters indexed locally.`
-            : ext === "PNG" || ext === "JPG" || ext === "JPEG" || ext === "PDF"
-              ? "Binary or image document queued for OCR/PDF extraction."
-              : "Metadata imported. Text extraction worker is the next processing step.",
+        status: processed.status,
+        warning: processed.warning,
         fileName: file.name,
-        extractedText,
-        textChars: extractedText.length,
+        extractedText: processed.extractedText,
+        pageTexts: processed.pageTexts,
+        textChars: processed.extractedText.length,
         importedAt: new Date().toISOString(),
+        detectedDates: detectDates(processed.extractedText),
+        detectedEntities: detectEntities(processed.extractedText),
       };
     }),
     );
@@ -969,6 +1825,121 @@ function App() {
     }
     if (!manualCard.documentId && imported[0]) {
       setManualCard((current) => ({ ...current, documentId: imported[0].id }));
+    }
+    setActiveDocumentId(imported[0]?.id ?? activeDocumentId);
+    setImportStatus(
+      `Imported ${imported.length} file${imported.length === 1 ? "" : "s"}; ${
+        suggestions.length
+      } evidence suggestion${suggestions.length === 1 ? "" : "s"} queued.`,
+    );
+  }
+
+  function createWorkspaceSnapshot(): WorkspaceSnapshot {
+    return {
+      caseProfile,
+      documents,
+      evidence,
+      issues,
+      timeline,
+      missingRecords,
+      meetingNotes,
+    };
+  }
+
+  function restoreWorkspaceSnapshot(snapshot: WorkspaceSnapshot, message: string) {
+    if (Array.isArray(snapshot.documents)) setDocuments(snapshot.documents);
+    if (snapshot.caseProfile) setCaseProfile(snapshot.caseProfile);
+    if (Array.isArray(snapshot.evidence)) setEvidence(snapshot.evidence);
+    if (Array.isArray(snapshot.issues)) setIssues(snapshot.issues);
+    if (Array.isArray(snapshot.timeline)) setTimeline(snapshot.timeline);
+    if (Array.isArray(snapshot.missingRecords)) setMissingRecords(snapshot.missingRecords);
+    if (Array.isArray(snapshot.meetingNotes)) setMeetingNotes(snapshot.meetingNotes);
+    setActiveDocumentId(snapshot.documents?.[0]?.id ?? activeDocumentId);
+    setSelectedEvidenceId(snapshot.evidence?.[0]?.id ?? selectedEvidenceId);
+    setActiveIssueId(snapshot.issues?.[0]?.id ?? activeIssueId);
+    setImportStatus(message);
+  }
+
+  function importWorkspace(files: FileList | null) {
+    const file = files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const snapshot = JSON.parse(String(reader.result ?? "{}")) as WorkspaceSnapshot;
+        restoreWorkspaceSnapshot(snapshot, `Workspace restored from ${file.name}.`);
+      } catch (error) {
+        setImportStatus(
+          `Workspace import failed: ${error instanceof Error ? error.message : "invalid JSON"}`,
+        );
+      }
+    };
+    reader.onerror = () => setImportStatus(`Workspace import failed: could not read ${file.name}.`);
+    reader.readAsText(file);
+  }
+
+  async function exportEncryptedWorkspace() {
+    if (!workspacePassphrase.trim()) {
+      setPrivacyStatus("Enter a passphrase before encrypted export.");
+      return;
+    }
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const iterations = 120000;
+    const key = await deriveWorkspaceKey(workspacePassphrase, salt, iterations);
+    const plaintext = new TextEncoder().encode(JSON.stringify(createWorkspaceSnapshot()));
+    const ciphertext = new Uint8Array(
+      await crypto.subtle.encrypt(
+        { name: "AES-GCM", iv: toArrayBuffer(iv) },
+        key,
+        toArrayBuffer(plaintext),
+      ),
+    );
+    const payload: EncryptedWorkspacePayload = {
+      format: "sourcedeck.encrypted.v1",
+      kdf: "PBKDF2-SHA256",
+      iterations,
+      salt: bytesToBase64(salt),
+      iv: bytesToBase64(iv),
+      ciphertext: bytesToBase64(ciphertext),
+      createdAt: new Date().toISOString(),
+    };
+    downloadText(
+      "sourcedeck-workspace.encrypted.json",
+      JSON.stringify(payload, null, 2),
+      "application/json",
+    );
+    setPrivacyStatus("Encrypted workspace exported.");
+  }
+
+  async function importEncryptedWorkspace(files: FileList | null) {
+    const file = files?.[0];
+    if (!file) return;
+    if (!workspacePassphrase.trim()) {
+      setPrivacyStatus("Enter the passphrase before encrypted import.");
+      return;
+    }
+    try {
+      const payload = JSON.parse(await file.text()) as EncryptedWorkspacePayload;
+      if (payload.format !== "sourcedeck.encrypted.v1") {
+        throw new Error("unsupported encrypted workspace format");
+      }
+      const salt = base64ToBytes(payload.salt);
+      const iv = base64ToBytes(payload.iv);
+      const ciphertext = base64ToBytes(payload.ciphertext);
+      const key = await deriveWorkspaceKey(workspacePassphrase, salt, payload.iterations);
+      const plaintext = await crypto.subtle.decrypt(
+        { name: "AES-GCM", iv: toArrayBuffer(iv) },
+        key,
+        toArrayBuffer(ciphertext),
+      );
+      const snapshot = JSON.parse(new TextDecoder().decode(plaintext)) as WorkspaceSnapshot;
+      restoreWorkspaceSnapshot(snapshot, `Encrypted workspace restored from ${file.name}.`);
+      setPrivacyStatus("Encrypted workspace restored.");
+    } catch (error) {
+      setPrivacyStatus(
+        `Encrypted import failed: ${error instanceof Error ? error.message : "wrong passphrase or invalid file"}`,
+      );
     }
   }
 
@@ -1028,6 +1999,65 @@ function App() {
     setSelectedEvidenceId(card.id);
   }
 
+  function promoteDocumentPage(document: SourceDocument, pageNumber = 1) {
+    const pageText =
+      document.pageTexts?.find((page) => page.page === pageNumber)?.text ??
+      document.extractedText ??
+      "";
+    const firstUsefulLine =
+      pageText
+        .split(/\n|(?<=[.!?])\s+/)
+        .map((line) => line.trim())
+        .find((line) => line.length > 40) ?? pageText.slice(0, 220);
+    if (!firstUsefulLine) return;
+    const suggestion = suggestFromText(firstUsefulLine, document.id, document.title)[0];
+    if (suggestion) {
+      acceptSuggestion({ ...suggestion, page: pageNumber });
+      setView("evidence");
+    }
+  }
+
+  function suggestFromDocument(document: SourceDocument) {
+    const sourceText = document.extractedText;
+    if (!sourceText) return;
+    setPrepSuggestions((current) => [
+      ...suggestFromText(sourceText, document.id, document.title),
+      ...current,
+    ]);
+    setView("prep");
+  }
+
+  function buildTimelineFromDocument(document: SourceDocument) {
+    const dates = document.detectedDates?.length ? document.detectedDates : [document.date];
+    const created = Array.from(new Set(dates))
+      .slice(0, 8)
+      .map((detectedDate, index): TimelineEntry => {
+        const page =
+          document.pageTexts?.find((item) =>
+            item.text.toLowerCase().includes(detectedDate.toLowerCase()),
+          ) ?? document.pageTexts?.[0];
+        const quote =
+          page?.text
+            .split(/\n|(?<=[.!?])\s+/)
+            .map((line) => line.trim())
+            .find((line) => line.toLowerCase().includes(detectedDate.toLowerCase())) ??
+          page?.text.slice(0, 220) ??
+          document.extractedText?.slice(0, 220) ??
+          document.title;
+        return {
+          id: makeId("time"),
+          date: normalizeDetectedDate(detectedDate),
+          event: `${document.title}: ${detectedDate}`,
+          documentId: document.id,
+          page: page?.page ?? index + 1,
+          quote,
+          issue: document.tags[0] ?? "Imported timeline",
+        };
+      });
+    setTimeline((current) => [...created, ...current]);
+    setView("timeline");
+  }
+
   function logMeetingNote(kind: MeetingNote["kind"]) {
     if (!noteDraft.trim()) return;
     const note: MeetingNote = {
@@ -1050,6 +2080,94 @@ function App() {
     setNoteDraft("");
   }
 
+  function analyzeTranscript() {
+    const lines = transcriptDraft
+      .split(/\n|(?<=[.!?])\s+/)
+      .map((line) => line.trim())
+      .filter((line) => line.length > 24);
+    const created = lines
+      .map((line): MeetingNote | null => {
+        const lower = line.toLowerCase();
+        const kind: MeetingNote["kind"] =
+          lower.match(/\b(refuse|decline|won't|cannot|can't|not able|no)\b/)
+            ? "Refusal"
+            : lower.match(/\b(will|agree|commit|by \d|before|deadline|provide)\b/)
+              ? "Commitment"
+              : lower.match(/\b(follow up|send|request|produce|schedule|review)\b/)
+                ? "Action"
+                : "Note";
+        return {
+          id: makeId("note"),
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          speaker: line.includes(":") ? line.split(":")[0] : "Transcript",
+          topic: selectedEvidence?.title ?? activeIssue?.title ?? "Transcript",
+          note: line,
+          linkedEvidence: selectedEvidence ? [selectedEvidence.id] : [],
+          followUp:
+            kind === "Refusal"
+              ? "Request written refusal and source authority."
+              : kind === "Commitment"
+                ? "Assign owner, deadline, and written confirmation."
+                : "Review after meeting.",
+          kind,
+        };
+      })
+      .filter((note): note is MeetingNote => Boolean(note))
+      .slice(0, 14);
+    setMeetingNotes((current) => [...created, ...current]);
+  }
+
+  function composeLiveResponse() {
+    if (!selectedEvidence) return;
+    const source = documentById.get(selectedEvidence.documentId);
+    const claim =
+      liveClaimDraft.trim() ||
+      "The other party made a claim that needs to be anchored in the record.";
+    setComposedResponse(
+      [
+        `Claim heard: ${claim}`,
+        "",
+        `Record anchor: ${source?.exhibit ?? "Unlabeled source"} - ${
+          source?.title ?? "Unknown source"
+        }, page ${selectedEvidence.page || "pending"}.`,
+        `Exact quote: "${selectedEvidence.quote}"`,
+        "",
+        `Professional response: I want to anchor this in the written record. ${selectedEvidence.question}`,
+        "",
+        `Follow-up request: If your position is different from this record, please identify the document, page, responsible decision-maker, and written basis for that position.`,
+        "",
+        `Counter point: ${selectedEvidence.counter}`,
+      ].join("\n"),
+    );
+  }
+
+  function openAuditRow(row: AuditRow) {
+    if (row.evidenceId) setSelectedEvidenceId(row.evidenceId);
+    if (row.documentId) setActiveDocumentId(row.documentId);
+    setView(row.targetView);
+  }
+
+  function logComposedResponse(kind: MeetingNote["kind"]) {
+    if (!composedResponse.trim() || !selectedEvidence) return;
+    const note: MeetingNote = {
+      id: makeId("note"),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      speaker: "SourceDeck composer",
+      topic: selectedEvidence.title,
+      note: composedResponse,
+      linkedEvidence: [selectedEvidence.id],
+      followUp: "Use this as the record anchor and request a written basis if disputed.",
+      kind,
+    };
+    setMeetingNotes((current) => [note, ...current]);
+  }
+
   function togglePacket(cardId: string) {
     setPacketIds((current) =>
       current.includes(cardId)
@@ -1064,6 +2182,7 @@ function App() {
 
   function resetWorkspace() {
     setDocuments(seedDocuments);
+    setCaseProfile(seedCaseProfile);
     setEvidence(seedEvidence);
     setIssues(seedIssues);
     setTimeline(seedTimeline);
@@ -1075,6 +2194,7 @@ function App() {
     setMeetingStartedAt(null);
     setSelectedEvidenceId(seedEvidence[0].id);
     setActiveIssueId(seedIssues[0].id);
+    setActiveDocumentId(seedDocuments[0].id);
   }
 
   const renderEvidenceCard = (card: EvidenceCard, compact = false) => {
@@ -1185,6 +2305,7 @@ function App() {
         <div className="sidebar-card">
           <span>Meeting posture</span>
           <strong>{meetingType}</strong>
+          <p>{caseProfile.name}</p>
           <p>{packetEvidence.length} packet items ready</p>
           <p>{meetingStartedAt ? `Timer ${meetingElapsed}` : "Timer idle"}</p>
         </div>
@@ -1233,6 +2354,40 @@ function App() {
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search issues, exact quotes, source docs, defenses, missing records..."
           />
+          <div className="search-counts" aria-label="Search result counts">
+            <span>{filteredEvidence.length} cards</span>
+            <span>{filteredDocuments.length} docs</span>
+            <span>{filteredMissingRecords.length} gaps</span>
+            {voiceStatus !== "Voice idle" && <span>{voiceStatus}</span>}
+          </div>
+          <button
+            type="button"
+            className={isListening ? "voice-button listening" : "voice-button"}
+            onClick={startVoiceQuery}
+          >
+            <Mic2 size={16} />
+            {isListening ? "Listening" : "Voice"}
+          </button>
+          <button
+            type="button"
+            onClick={createIssueFromSearch}
+            disabled={!query.trim() || filteredEvidence.length === 0}
+          >
+            Build issue
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              downloadText(
+                "sourcedeck-search-packet.md",
+                buildPacketMarkdown(filteredEvidence, `Search Packet - ${query || "All Evidence"}`),
+                "text/markdown",
+              )
+            }
+            disabled={filteredEvidence.length === 0}
+          >
+            Export search
+          </button>
           <button type="button" onClick={() => setView("meeting")}>
             Meeting mode <ArrowRight size={16} />
           </button>
@@ -1249,6 +2404,36 @@ function App() {
                   during the meeting to pull exact quotes, page references,
                   questions, refusals, and exportable packets.
                 </p>
+              </div>
+              <div className="case-profile-grid">
+                <input
+                  value={caseProfile.name}
+                  onChange={(event) =>
+                    setCaseProfile({ ...caseProfile, name: event.target.value })
+                  }
+                  placeholder="Case name"
+                />
+                <input
+                  value={caseProfile.role}
+                  onChange={(event) =>
+                    setCaseProfile({ ...caseProfile, role: event.target.value })
+                  }
+                  placeholder="Your role"
+                />
+                <input
+                  type="date"
+                  value={caseProfile.meetingDate}
+                  onChange={(event) =>
+                    setCaseProfile({ ...caseProfile, meetingDate: event.target.value })
+                  }
+                />
+                <input
+                  value={caseProfile.objective}
+                  onChange={(event) =>
+                    setCaseProfile({ ...caseProfile, objective: event.target.value })
+                  }
+                  placeholder="Meeting objective"
+                />
               </div>
               <div className="metric-row">
                 <div><strong>{documents.length}</strong><span>documents</span></div>
@@ -1284,6 +2469,28 @@ function App() {
 
             <section className="panel wide">
               <div className="section-title">
+                <ClipboardCheck size={20} />
+                <div>
+                  <h2>Case templates</h2>
+                  <p>Apply a meeting posture, default issues, and missing-record targets.</p>
+                </div>
+              </div>
+              <div className="template-grid">
+                {caseTemplates.map((template) => (
+                  <button
+                    key={template.id}
+                    type="button"
+                    onClick={() => applyCaseTemplate(template)}
+                  >
+                    <strong>{template.title}</strong>
+                    <span>{template.issues.length} issues / {template.missingRecords.length} records</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <section className="panel wide">
+              <div className="section-title">
                 <MessageSquareQuote size={20} />
                 <div>
                   <h2>Fastest matching evidence</h2>
@@ -1292,6 +2499,66 @@ function App() {
               </div>
               <div className="evidence-grid">
                 {filteredEvidence.slice(0, 4).map((card) => renderEvidenceCard(card))}
+              </div>
+            </section>
+
+            <section className="panel wide">
+              <div className="section-title">
+                <FolderOpen size={20} />
+                <div>
+                  <h2>Matching source documents</h2>
+                  <p>Search now reaches document text, detected dates, entities, and record gaps.</p>
+                </div>
+              </div>
+              <div className="doc-hit-grid">
+                {filteredDocuments.slice(0, 4).map((document) => (
+                  <button
+                    key={document.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveDocumentId(document.id);
+                      setView("documents");
+                    }}
+                  >
+                    <strong>{document.exhibit} - {document.title}</strong>
+                    <span>{document.status} / {(document.textChars ?? 0).toLocaleString()} chars</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <section className="panel wide">
+              <div className="section-title">
+                <ShieldCheck size={20} />
+                <div>
+                  <h2>Source integrity audit</h2>
+                  <p>{sourceAudit.length} items need review before a serious packet.</p>
+                </div>
+              </div>
+              <div className="audit-list">
+                {sourceAudit.slice(0, 8).map((row) => (
+                  <article key={row.id}>
+                    <span className={`priority priority-${row.severity.toLowerCase()}`}>
+                      {row.severity}
+                    </span>
+                    <div>
+                      <strong>{row.title}</strong>
+                      <p>{row.detail}</p>
+                    </div>
+                    <button type="button" onClick={() => openAuditRow(row)}>
+                      Review
+                    </button>
+                  </article>
+                ))}
+                {sourceAudit.length === 0 && (
+                  <article>
+                    <CheckCircle2 size={18} />
+                    <div>
+                      <strong>All visible cards are source-anchored.</strong>
+                      <p>Documents, page references, quotes, and confidence checks are clean.</p>
+                    </div>
+                  </article>
+                )}
               </div>
             </section>
           </div>
@@ -1316,6 +2583,7 @@ function App() {
                   onChange={(event) => void addFiles(event.target.files)}
                 />
               </label>
+              {importStatus ? <p className="import-status">{importStatus}</p> : null}
               <div className="doc-list">
                 {documents.map((document) => (
                   <article key={document.id} className="doc-row">
@@ -1331,9 +2599,89 @@ function App() {
                     <span className={`status status-${document.status.toLowerCase().replace(" ", "-")}`}>
                       {document.status}
                     </span>
+                    <button
+                      type="button"
+                      className="row-action"
+                      onClick={() => setActiveDocumentId(document.id)}
+                    >
+                      Review
+                    </button>
                   </article>
                 ))}
               </div>
+            </section>
+
+            <section className="panel">
+              {activeDocument ? (
+                <div className="document-review">
+                  <div className="section-title">
+                    <FileSearch size={20} />
+                    <div>
+                      <h2>Source review</h2>
+                      <p>
+                        {activeDocument.exhibit} - {activeDocument.title}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="source-stats">
+                    <span>{activeDocument.pages || 0} pages</span>
+                    <span>{(activeDocument.textChars ?? 0).toLocaleString()} chars</span>
+                    <span>{activeDocument.status}</span>
+                  </div>
+                  <div className="detected-list">
+                    <div>
+                      <strong>Detected dates</strong>
+                      <p>
+                        {activeDocument.detectedDates?.length
+                          ? activeDocument.detectedDates.join(", ")
+                          : "None detected yet"}
+                      </p>
+                    </div>
+                    <div>
+                      <strong>Detected entities</strong>
+                      <p>
+                        {activeDocument.detectedEntities?.length
+                          ? activeDocument.detectedEntities.join(", ")
+                          : "None detected yet"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="page-text-list">
+                    {(activeDocument.pageTexts?.length
+                      ? activeDocument.pageTexts
+                      : [{ page: 1, text: activeDocument.extractedText ?? "" }]
+                    ).map((page) => (
+                      <article key={page.page}>
+                        <div>
+                          <strong>Page {page.page}</strong>
+                          <button
+                            type="button"
+                            onClick={() => promoteDocumentPage(activeDocument, page.page)}
+                          >
+                            Promote to evidence
+                          </button>
+                        </div>
+                        <p>{page.text || "No extracted text for this page yet."}</p>
+                      </article>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    className="primary"
+                    onClick={() => suggestFromDocument(activeDocument)}
+                    disabled={!activeDocument.extractedText}
+                  >
+                    <Brain size={17} /> Generate suggestions from source
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => buildTimelineFromDocument(activeDocument)}
+                    disabled={!activeDocument.extractedText && !activeDocument.detectedDates?.length}
+                  >
+                    <CalendarDays size={17} /> Add detected dates to timeline
+                  </button>
+                </div>
+              ) : null}
             </section>
 
             <section className="panel">
@@ -1509,6 +2857,23 @@ function App() {
                   );
                 })}
               </ol>
+              <div className="card-actions">
+                <button type="button" onClick={() => copyText(buildRemedyPlan())}>
+                  <ClipboardCopy size={16} /> Copy remedy plan
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    downloadText(
+                      "sourcedeck-remedy-plan.md",
+                      buildRemedyPlan(),
+                      "text/markdown",
+                    )
+                  }
+                >
+                  <Download size={16} /> Export remedy plan
+                </button>
+              </div>
               <div className="contradiction-list">
                 <h3>Contradiction map</h3>
                 {contradictions.map((row) => (
@@ -1568,6 +2933,23 @@ function App() {
                   <h2>Missing records tracker</h2>
                   <p>Records to request, chase, or preserve as refusals.</p>
                 </div>
+              </div>
+              <div className="card-actions">
+                <button
+                  type="button"
+                  onClick={() =>
+                    downloadText(
+                      "sourcedeck-record-request.md",
+                      buildMissingRecordRequest(),
+                      "text/markdown",
+                    )
+                  }
+                >
+                  <Download size={16} /> Export request
+                </button>
+                <button type="button" onClick={() => copyText(buildMissingRecordRequest())}>
+                  <ClipboardCopy size={16} /> Copy request
+                </button>
               </div>
               <div className="completeness-card">
                 <div>
@@ -1663,6 +3045,41 @@ function App() {
                   >
                     <Download size={16} /> Export
                   </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      downloadText("sourcedeck-meeting-brief.md", buildMeetingBrief(), "text/markdown")
+                    }
+                  >
+                    <FileText size={16} /> Brief
+                  </button>
+                </div>
+                <div className="composer-box">
+                  <textarea
+                    value={liveClaimDraft}
+                    onChange={(event) => setLiveClaimDraft(event.target.value)}
+                    placeholder="Paste the claim you just heard, or leave blank and build from the selected evidence..."
+                  />
+                  <div className="card-actions">
+                    <button type="button" onClick={composeLiveResponse}>
+                      <Brain size={16} /> Ask it cleaner
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => copyText(composedResponse)}
+                      disabled={!composedResponse.trim()}
+                    >
+                      <ClipboardCopy size={16} /> Copy response
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => logComposedResponse("Action")}
+                      disabled={!composedResponse.trim()}
+                    >
+                      <BookOpenCheck size={16} /> Log follow-up
+                    </button>
+                  </div>
+                  {composedResponse && <pre>{composedResponse}</pre>}
                 </div>
               </article>
             </section>
@@ -1703,6 +3120,16 @@ function App() {
                   </article>
                 ))}
               </div>
+              <div className="transcript-box">
+                <textarea
+                  value={transcriptDraft}
+                  onChange={(event) => setTranscriptDraft(event.target.value)}
+                  placeholder="Paste rough transcript or post-meeting notes..."
+                />
+                <button type="button" onClick={analyzeTranscript} disabled={!transcriptDraft.trim()}>
+                  <Brain size={16} /> Extract notes/refusals/actions
+                </button>
+              </div>
             </section>
           </div>
         )}
@@ -1730,6 +3157,12 @@ function App() {
                   </label>
                 ))}
               </div>
+              <textarea
+                className="redaction-box"
+                value={redactionTerms}
+                onChange={(event) => setRedactionTerms(event.target.value)}
+                placeholder="One redaction term per line"
+              />
               <button
                 type="button"
                 className="primary"
@@ -1738,6 +3171,18 @@ function App() {
                 }
               >
                 <Download size={17} /> Download meeting packet
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  downloadText(
+                    "sourcedeck-redacted-packet.md",
+                    redactContent(buildPacketMarkdown()),
+                    "text/markdown",
+                  )
+                }
+              >
+                <ShieldCheck size={17} /> Export redacted packet
               </button>
               <button type="button" onClick={() => window.print()}>
                 <FileText size={17} /> Print current packet
@@ -1757,6 +3202,30 @@ function App() {
                 }
               >
                 <Download size={17} /> Export quote CSV
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  downloadText(
+                    "sourcedeck-exhibit-index.md",
+                    buildExhibitIndexMarkdown(),
+                    "text/markdown",
+                  )
+                }
+              >
+                <FileArchive size={17} /> Export exhibit index
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  downloadText(
+                    "sourcedeck-exhibit-index.csv",
+                    buildExhibitIndexCsv(),
+                    "text/csv",
+                  )
+                }
+              >
+                <Download size={17} /> Export exhibit CSV
               </button>
               <div className="preset-grid">
                 {[
@@ -1785,13 +3254,43 @@ function App() {
                 onClick={() =>
                   downloadText(
                     "sourcedeck-data.json",
-                    JSON.stringify({ documents, evidence, issues, timeline, missingRecords, meetingNotes }, null, 2),
+                    JSON.stringify(createWorkspaceSnapshot(), null, 2),
                     "application/json",
                   )
                 }
               >
                 <Download size={17} /> Export workspace JSON
               </button>
+              <label className="file-button">
+                Import workspace JSON
+                <input
+                  type="file"
+                  accept="application/json,.json"
+                  onChange={(event) => importWorkspace(event.target.files)}
+                />
+              </label>
+              <div className="privacy-box">
+                <input
+                  type="password"
+                  value={workspacePassphrase}
+                  onChange={(event) => setWorkspacePassphrase(event.target.value)}
+                  placeholder="Workspace encryption passphrase"
+                />
+                <div className="card-actions">
+                  <button type="button" onClick={() => void exportEncryptedWorkspace()}>
+                    <ShieldCheck size={16} /> Export encrypted
+                  </button>
+                  <label className="file-button">
+                    Import encrypted
+                    <input
+                      type="file"
+                      accept="application/json,.json"
+                      onChange={(event) => void importEncryptedWorkspace(event.target.files)}
+                    />
+                  </label>
+                </div>
+                {privacyStatus && <p>{privacyStatus}</p>}
+              </div>
               <button type="button" onClick={resetWorkspace}>
                 Reset seeded workspace
               </button>
@@ -1810,6 +3309,23 @@ function App() {
                 value={agreementText}
                 onChange={(event) => setAgreementText(event.target.value)}
               />
+              <div className="card-actions">
+                <button type="button" onClick={() => copyText(buildAgreementRevision())}>
+                  <ClipboardCopy size={16} /> Copy revised terms
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    downloadText(
+                      "sourcedeck-agreement-revision.md",
+                      buildAgreementRevision(),
+                      "text/markdown",
+                    )
+                  }
+                >
+                  <Download size={16} /> Export revision
+                </button>
+              </div>
               <div className="risk-list">
                 {agreementRisks.length === 0 ? (
                   <article className="success">

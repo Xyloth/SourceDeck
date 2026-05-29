@@ -36,3 +36,30 @@ Start time: 2026-05-29T17:54:45.2000944-04:00
 - Actual logged task time: 28.27 minutes
 - Estimate error: -113.73 minutes
 - Wall-clock probation elapsed at final log: 30.26 minutes
+
+## Second 30-Minute Window
+
+Start time: 2026-05-29T18:31:53.0727433-04:00
+
+| Task | Estimate | Start | Finish | Actual | Delta | Notes |
+| --- | ---: | --- | --- | ---: | ---: | --- |
+| Build real browser-side PDF/DOCX/text ingestion substrate | 9 min | 2026-05-29T18:31:53.0727433-04:00 | 2026-05-29T18:34:40.7109843-04:00 | 2.79 min | -6.21 min | Added PDF extraction, DOCX extraction, page text arrays, local date/entity detection, and processor warnings. |
+| Add document detail/source review UI powered by extracted pages | 7 min | 2026-05-29T18:34:45-04:00 | 2026-05-29T18:36:25.5419457-04:00 | 1.68 min | -5.32 min | Added document review panel, page text review, detected dates/entities, source-level suggestions, and page-to-evidence promotion. |
+| Code-split processors and add import progress/error state | 5 min | 2026-05-29T18:36:30-04:00 | 2026-05-29T18:37:30.4977132-04:00 | 1.01 min | -3.99 min | Lazy-loaded PDF/DOCX processors, restored main bundle size, and added import progress/error copy. |
+| Improve search, issue extraction, and export reuse from same data | 6 min | 2026-05-29T18:37:35-04:00 | 2026-05-29T18:39:03.4419720-04:00 | 1.47 min | -4.53 min | Search now counts cards/docs/gaps, exports packets, creates issue maps, and jumps to matching source docs. |
+| Add case templates for IEP, HR, medical, legal, insurance, compliance | 6 min | 2026-05-29T18:39:05-04:00 | 2026-05-29T18:40:39.0953342-04:00 | 1.57 min | -4.43 min | Added templates that inject default meeting type, issues, and missing-record targets. |
+| Add workspace JSON import/restore | 5 min | 2026-05-29T18:40:42-04:00 | 2026-05-29T18:41:33.2660578-04:00 | 0.85 min | -4.15 min | Added JSON workspace import/restore using the same snapshot shape as export. |
+| Add case workspace metadata wired into packets | 5 min | 2026-05-29T18:41:35-04:00 | 2026-05-29T18:42:53.2400610-04:00 | 1.30 min | -3.70 min | Added case name/role/objective/date and wired it into Markdown, HTML, and JSON exports. |
+| Add redaction terms and redacted packet export | 6 min | 2026-05-29T18:42:55-04:00 | 2026-05-29T18:43:49.3146283-04:00 | 0.90 min | -5.10 min | Added manual redaction terms plus automatic email/phone/ID redaction for packet export. |
+| Add transcript companion into meeting notes | 6 min | 2026-05-29T18:43:52-04:00 | 2026-05-29T18:44:56.7903196-04:00 | 1.08 min | -4.92 min | Added transcript paste analysis that creates notes, refusals, commitments, and action items. |
+| Add voice query for live search | 5 min | 2026-05-29T18:45:00-04:00 | 2026-05-29T18:48:15.0658019-04:00 | 3.25 min | -1.75 min | Web Speech API now feeds the existing search/retrieval flow, opens meeting mode, and selects a matching evidence card. |
+| Add source-grounded live response composer | 7 min | 2026-05-29T18:48:20-04:00 | 2026-05-29T18:49:03.0724866-04:00 | 0.72 min | -6.28 min | Same selected card now drafts a professional question, record-anchor response, and logged follow-up request. |
+| Add source integrity audit and repair jumps | 6 min | 2026-05-29T18:49:05-04:00 | 2026-05-29T18:49:56.7788950-04:00 | 0.86 min | -5.14 min | The same source/page/confidence fields now expose unsupported cards, weak quotes, OCR gaps, and missing page anchors. |
+| Add timeline extraction from document dates | 6 min | 2026-05-29T18:50:00-04:00 | 2026-05-29T18:50:55.0371388-04:00 | 0.92 min | -5.08 min | Detected dates and page text can now become source-linked timeline entries from the source review panel. |
+| Add formal exhibit index exports | 5 min | 2026-05-29T18:51:00-04:00 | 2026-05-29T18:51:30.8947230-04:00 | 0.51 min | -4.49 min | Existing document/evidence metadata now generates Markdown and CSV exhibit indexes. |
+| Add missing-record request generator | 5 min | 2026-05-29T18:51:35-04:00 | 2026-05-29T18:52:02.4475362-04:00 | 0.46 min | -4.54 min | Missing-record tracker now exports and copies written production/refusal requests from the same rows. |
+| Add agreement revision generator | 5 min | 2026-05-29T18:52:05-04:00 | 2026-05-29T18:52:33.6160914-04:00 | 0.48 min | -4.52 min | Agreement guard now turns risk flags into concrete replacement terms that can be copied or exported. |
+| Add encrypted workspace export/import | 10 min | 2026-05-29T18:52:50-04:00 | 2026-05-29T18:54:18.4673135-04:00 | 1.47 min | -8.53 min | Web Crypto now encrypts/imports the same local JSON snapshot with a PBKDF2/AES-GCM passphrase flow. |
+| Add active-issue remedy planner | 6 min | 2026-05-29T18:54:20-04:00 | 2026-05-29T18:54:53.2149630-04:00 | 0.55 min | -5.45 min | Active issue, packet evidence, and missing records now generate proposed outcomes/remedy plans. |
+| Add meeting brief generator | 6 min | 2026-05-29T18:54:55-04:00 | 2026-05-29T18:55:28.7049844-04:00 | 0.56 min | -5.44 min | Current deck state now generates opening statement, questions, gaps, guardrails, and packet items. |
+| Browser QA, release packaging, deploy, and push | 8 min | 2026-05-29T18:55:30-04:00 | Pending | Pending | Pending | Verify the expanded UI locally, then ship the second-window build. |
