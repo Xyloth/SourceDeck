@@ -752,10 +752,10 @@ async function readDocxFile(file: File): Promise<ProcessedFile> {
     extractedText,
     pageTexts: extractedText ? [{ page: 1, text: extractedText }] : [],
     pages: extractedText ? 1 : 0,
-    status: extractedText ? "Indexed" : "Needs review",
+    status: extractedText ? "Indexed" : "Needs OCR",
     warning: extractedText
       ? `${extractedText.length.toLocaleString()} DOCX characters indexed locally.`
-      : "DOCX imported but no text was extracted.",
+      : "DOCX has no extractable text; it may be an image, chart, or embedded object that needs OCR.",
   };
 }
 
@@ -766,6 +766,16 @@ async function processFile(file: File): Promise<ProcessedFile> {
   }
   if (ext === "docx") {
     return readDocxFile(file);
+  }
+  if (ext === "doc") {
+    return {
+      extractedText: "",
+      pageTexts: [],
+      pages: 0,
+      status: "Needs review",
+      warning:
+        "Legacy DOC files cannot be parsed in the browser build. Use npm run case:import locally, or convert this file to DOCX/PDF.",
+    };
   }
   if (plainTextExtensions.has(ext)) {
     const extractedText = await readPlainTextFile(file);
@@ -2574,12 +2584,20 @@ function App() {
                   <p>Import records, label exhibits, and track OCR/review status.</p>
                 </div>
               </div>
-              <label className="drop-zone">
+              <label
+                className="drop-zone"
+                onDragOver={(event) => event.preventDefault()}
+                onDrop={(event) => {
+                  event.preventDefault();
+                  void addFiles(event.dataTransfer.files);
+                }}
+              >
                 <Upload size={24} />
-                <span>Drop-ready import</span>
+                <span>Drop files here or click to import DOCX, PDF, text, CSV, JSON, and images</span>
                 <input
                   type="file"
                   multiple
+                  accept=".pdf,.doc,.docx,.txt,.md,.csv,.json,.log,.html,.png,.jpg,.jpeg,.tif,.tiff"
                   onChange={(event) => void addFiles(event.target.files)}
                 />
               </label>

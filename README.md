@@ -70,6 +70,16 @@ Build:
 npm run build
 ```
 
+Build a local SourceDeck workspace from a folder of private case files:
+
+```powershell
+npm run case:import -- "C:\Jace Placement Case"
+```
+
+This writes `sourcedeck-workspace.json` and a pressure-test report into that
+folder. The generated JSON can be imported from SourceDeck's packet/export
+screen. Do not commit generated case workspaces or private records.
+
 ## Product Rule
 
 AI can prepare the deck, organize issues, suggest evidence cards, draft clean

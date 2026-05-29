@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# Local private case exports
+sourcedeck-workspace.json
+sourcedeck-pressure-test-report.md
+sourcedeck-workspace.encrypted.json
