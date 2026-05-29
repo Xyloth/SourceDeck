@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
   ArrowRight,
@@ -582,9 +582,9 @@ function quoteContext(text: string | undefined, quote: string) {
 function App() {
   const [documents, setDocuments] = useLocalState("sourcedeck.documents", seedDocuments);
   const [evidence, setEvidence] = useLocalState("sourcedeck.evidence", seedEvidence);
-  const [issues] = useLocalState("sourcedeck.issues", seedIssues);
-  const [timeline] = useLocalState("sourcedeck.timeline", seedTimeline);
-  const [missingRecords] = useLocalState(
+  const [issues, setIssues] = useLocalState("sourcedeck.issues", seedIssues);
+  const [timeline, setTimeline] = useLocalState("sourcedeck.timeline", seedTimeline);
+  const [missingRecords, setMissingRecords] = useLocalState(
     "sourcedeck.missingRecords",
     seedMissingRecords,
   );
@@ -608,6 +608,12 @@ function App() {
   );
   const [prepText, setPrepText] = useState("");
   const [prepSuggestions, setPrepSuggestions] = useState<PrepSuggestion[]>([]);
+  const [meetingStartedAt, setMeetingStartedAt] = useLocalState<string | null>(
+    "sourcedeck.meetingStartedAt",
+    null,
+  );
+  const [clockTick, setClockTick] = useState(0);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [manualCard, setManualCard] = useState({
     title: "",
     quote: "",
@@ -624,6 +630,39 @@ function App() {
 
   const selectedEvidence = evidence.find((card) => card.id === selectedEvidenceId) ?? evidence[0];
   const activeIssue = issues.find((issue) => issue.id === activeIssueId) ?? issues[0];
+  const meetingElapsedMs = meetingStartedAt
+    ? Math.max(0, clockTick - new Date(meetingStartedAt).getTime())
+    : 0;
+  const meetingElapsed = new Date(meetingElapsedMs).toISOString().slice(11, 19);
+
+  useEffect(() => {
+    if (!meetingStartedAt) return;
+    const id = window.setInterval(() => setClockTick(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, [meetingStartedAt]);
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      const target = event.target as HTMLElement | null;
+      const isTyping =
+        target?.tagName === "INPUT" ||
+        target?.tagName === "TEXTAREA" ||
+        target?.tagName === "SELECT";
+      if (
+        (event.key === "/" && !isTyping) ||
+        ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k")
+      ) {
+        event.preventDefault();
+        searchInputRef.current?.focus();
+      }
+      if (event.altKey && event.key.toLowerCase() === "m") {
+        event.preventDefault();
+        setView("meeting");
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   const searchCorpus = query.trim().toLowerCase();
   const filteredEvidence = useMemo(() => {
@@ -1023,6 +1062,21 @@ function App() {
     void navigator.clipboard?.writeText(value);
   }
 
+  function resetWorkspace() {
+    setDocuments(seedDocuments);
+    setEvidence(seedEvidence);
+    setIssues(seedIssues);
+    setTimeline(seedTimeline);
+    setMissingRecords(seedMissingRecords);
+    setMeetingNotes([]);
+    setPacketIds(["ev_related_services", "ev_academics"]);
+    setPrepSuggestions([]);
+    setPrepText("");
+    setMeetingStartedAt(null);
+    setSelectedEvidenceId(seedEvidence[0].id);
+    setActiveIssueId(seedIssues[0].id);
+  }
+
   const renderEvidenceCard = (card: EvidenceCard, compact = false) => {
     const source = documentById.get(card.documentId);
     const active = selectedEvidence?.id === card.id;
@@ -1132,6 +1186,7 @@ function App() {
           <span>Meeting posture</span>
           <strong>{meetingType}</strong>
           <p>{packetEvidence.length} packet items ready</p>
+          <p>{meetingStartedAt ? `Timer ${meetingElapsed}` : "Timer idle"}</p>
         </div>
       </aside>
 
@@ -1149,6 +1204,17 @@ function App() {
             </select>
             <button
               type="button"
+              onClick={() =>
+                meetingStartedAt
+                  ? setMeetingStartedAt(null)
+                  : (setClockTick(Date.now()), setMeetingStartedAt(new Date().toISOString()))
+              }
+            >
+              <Timer size={17} />
+              {meetingStartedAt ? meetingElapsed : "Start timer"}
+            </button>
+            <button
+              type="button"
               className="primary"
               onClick={() =>
                 downloadText("sourcedeck-packet.md", buildPacketMarkdown(), "text/markdown")
@@ -1162,6 +1228,7 @@ function App() {
         <section className="search-panel">
           <Search size={22} />
           <input
+            ref={searchInputRef}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search issues, exact quotes, source docs, defenses, missing records..."
@@ -1672,6 +1739,9 @@ function App() {
               >
                 <Download size={17} /> Download meeting packet
               </button>
+              <button type="button" onClick={() => window.print()}>
+                <FileText size={17} /> Print current packet
+              </button>
               <button
                 type="button"
                 onClick={() =>
@@ -1721,6 +1791,9 @@ function App() {
                 }
               >
                 <Download size={17} /> Export workspace JSON
+              </button>
+              <button type="button" onClick={resetWorkspace}>
+                Reset seeded workspace
               </button>
             </section>
 

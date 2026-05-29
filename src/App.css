@@ -827,3 +827,57 @@ blockquote {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+@media print {
+  .sidebar,
+  .topbar-actions,
+  .search-panel,
+  button {
+    display: none !important;
+  }
+
+  .app-shell,
+  .workspace,
+  .panel,
+  .hero-panel {
+    display: block;
+    background: white !important;
+    color: #111827 !important;
+    box-shadow: none !important;
+    border-color: #d1d5db !important;
+  }
+
+  .workspace {
+    padding: 0;
+  }
+
+  .topbar h1,
+  .section-title h2,
+  .detail-panel h2,
+  .live-card h2,
+  h1,
+  h2,
+  h3,
+  p,
+  span,
+  strong,
+  blockquote {
+    color: #111827 !important;
+  }
+
+  .two-column,
+  .meeting-grid,
+  .evidence-view,
+  .command-grid,
+  .evidence-grid {
+    display: block;
+  }
+
+  .panel,
+  .evidence-card,
+  .doc-row,
+  .missing-list article {
+    break-inside: avoid;
+    margin-bottom: 12px;
+  }
+}
