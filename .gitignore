@@ -1,0 +1,47 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Local env files (hold the private deck path; never commit)
+.env
+.env.*
+!.env.example
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+.vercel
+
+# Local agent tooling
+.claude
+
+# Local private case exports
+sourcedeck-workspace.json
+sourcedeck-pressure-test-report.md
+sourcedeck-workspace.encrypted.json
+
+# Case-specific build scripts + decks (embed case PII - never commit)
+scripts/*casedeck*.mjs
+scripts/extract-attachments.mjs
+*casedeck*.json
+# Legacy: the local case deck used to live here. It now lives OUTSIDE the repo entirely,
+# pointed to by SOURCEDECK_DECK_PATH in .env.local. Kept ignored so a stray deck can't be committed.
+private-case/

@@ -1,0 +1,399 @@
+{
+  "caseProfile": {
+    "name": "sample-records",
+    "role": "Customer / reviewer",
+    "objective": "Prepare source-grounded questions, quotes, missing-record requests, and meeting-ready evidence packets.",
+    "meetingDate": ""
+  },
+  "documents": [
+    {
+      "id": "doc_agreement_language_sample",
+      "title": "agreement language sample",
+      "type": "TXT",
+      "date": "2026-06-17",
+      "author": "Imported local case folder",
+      "pages": 1,
+      "exhibit": "Exhibit A",
+      "tags": [
+        "Imported",
+        "Service level agreement",
+        "Uptime data"
+      ],
+      "status": "Indexed",
+      "warning": "280 text characters indexed by local preloader. Original file vaulted as sha256:befbaa46a588d06e8209c9b22dd176bd97462556c22d7ac7ee283840883a4451.",
+      "fileName": "agreement-language-sample.txt",
+      "extractedText": "The vendor will gradually increase service levels as appropriate.\n\nThe customer agrees that this agreement resolves all issues and releases all\nclaims known or unknown through the date of execution.\n\nService levels will increase as tolerated and review will occur at a later date.",
+      "pageTexts": [
+        {
+          "page": 1,
+          "text": "The vendor will gradually increase service levels as appropriate.\n\nThe customer agrees that this agreement resolves all issues and releases all\nclaims known or unknown through the date of execution.\n\nService levels will increase as tolerated and review will occur at a later date."
+        }
+      ],
+      "textChars": 280,
+      "importedAt": "2026-06-17T00:09:18.550Z",
+      "detectedDates": [],
+      "detectedEntities": [],
+      "sourceVaultManifest": {
+        "format": "sourcedeck.source-vault-manifest.v1",
+        "vaultId": "source-vault:doc_agreement_language_sample",
+        "documentId": "doc_agreement_language_sample",
+        "createdAt": "2026-06-17T00:09:18.550Z",
+        "original": {
+          "format": "sourcedeck.source-vault-blob.v1",
+          "recordId": "source-vault:original_file:sha256:befbaa46a588d06e8209c9b22dd176bd97462556c22d7ac7ee283840883a4451",
+          "documentId": "doc_agreement_language_sample",
+          "kind": "original_file",
+          "mediaType": "text/plain",
+          "contentHash": "sha256:befbaa46a588d06e8209c9b22dd176bd97462556c22d7ac7ee283840883a4451",
+          "byteLength": 281,
+          "createdAt": "2026-06-17T00:09:18.550Z",
+          "payload": {
+            "encoding": "base64",
+            "data": "VGhlIHZlbmRvciB3aWxsIGdyYWR1YWxseSBpbmNyZWFzZSBzZXJ2aWNlIGxldmVscyBhcyBhcHByb3ByaWF0ZS4KClRoZSBjdXN0b21lciBhZ3JlZXMgdGhhdCB0aGlzIGFncmVlbWVudCByZXNvbHZlcyBhbGwgaXNzdWVzIGFuZCByZWxlYXNlcyBhbGwKY2xhaW1zIGtub3duIG9yIHVua25vd24gdGhyb3VnaCB0aGUgZGF0ZSBvZiBleGVjdXRpb24uCgpTZXJ2aWNlIGxldmVscyB3aWxsIGluY3JlYXNlIGFzIHRvbGVyYXRlZCBhbmQgcmV2aWV3IHdpbGwgb2NjdXIgYXQgYSBsYXRlciBkYXRlLgo="
+          },
+          "metadata": {
+            "fileName": "agreement-language-sample.txt",
+            "fileType": "TXT",
+            "sourcePath": "sample-records\\agreement-language-sample.txt"
+          }
+        },
+        "pageImages": [],
+        "metadata": {
+          "fileName": "agreement-language-sample.txt",
+          "fileType": "TXT",
+          "localPreloader": true
+        },
+        "manifestHash": "sha256:0c9832ce1d62b79ce74276500aa23e2adb7521a9f666faef8d9aef23fc518876"
+      },
+      "sourceVaultVerified": true
+    },
+    {
+      "id": "doc_vendor_status_notice_excerpt",
+      "title": "vendor status notice excerpt",
+      "type": "TXT",
+      "date": "2026-06-17",
+      "author": "Imported local case folder",
+      "pages": 1,
+      "exhibit": "Exhibit B",
+      "tags": [
+        "Imported",
+        "Support escalation",
+        "Service level agreement",
+        "Acceptance criteria",
+        "Uptime data"
+      ],
+      "status": "Indexed",
+      "warning": "557 text characters indexed by local preloader. Original file vaulted as sha256:b296d73851453fbed2cb602eb8cafb50de75758f6cb1af6061a4afdf86b02ab8.",
+      "fileName": "vendor-status-notice-excerpt.txt",
+      "extractedText": "December 4, 2025 Vendor Status Notice\n\nBecause of the intensive focus on a separate platform migration, the team has not been\nable to deliver the contracted reporting work this quarter.\n\nBecause the maintenance window for the environment was so limited, the agreed\nsupport tier could not be provided at this time.\n\nThe team will continue to review capacity and gradually increase service levels as\nappropriate.\n\nAcme Corp requested uptime logs and incident records to verify whether\nthe deliverables required by the Master Services Agreement were completed.",
+      "pageTexts": [
+        {
+          "page": 1,
+          "text": "December 4, 2025 Vendor Status Notice\n\nBecause of the intensive focus on a separate platform migration, the team has not been\nable to deliver the contracted reporting work this quarter.\n\nBecause the maintenance window for the environment was so limited, the agreed\nsupport tier could not be provided at this time.\n\nThe team will continue to review capacity and gradually increase service levels as\nappropriate.\n\nAcme Corp requested uptime logs and incident records to verify whether\nthe deliverables required by the Master Services Agreement were completed."
+        }
+      ],
+      "textChars": 557,
+      "importedAt": "2026-06-17T00:09:18.555Z",
+      "detectedDates": [
+        "December 4, 2025"
+      ],
+      "detectedEntities": [
+        "Vendor Status Notice\n\nBecause",
+        "Acme Corp",
+        "Master Services Agreement"
+      ],
+      "sourceVaultManifest": {
+        "format": "sourcedeck.source-vault-manifest.v1",
+        "vaultId": "source-vault:doc_vendor_status_notice_excerpt",
+        "documentId": "doc_vendor_status_notice_excerpt",
+        "createdAt": "2026-06-17T00:09:18.555Z",
+        "original": {
+          "format": "sourcedeck.source-vault-blob.v1",
+          "recordId": "source-vault:original_file:sha256:b296d73851453fbed2cb602eb8cafb50de75758f6cb1af6061a4afdf86b02ab8",
+          "documentId": "doc_vendor_status_notice_excerpt",
+          "kind": "original_file",
+          "mediaType": "text/plain",
+          "contentHash": "sha256:b296d73851453fbed2cb602eb8cafb50de75758f6cb1af6061a4afdf86b02ab8",
+          "byteLength": 558,
+          "createdAt": "2026-06-17T00:09:18.555Z",
+          "payload": {
+            "encoding": "base64",
+            "data": "RGVjZW1iZXIgNCwgMjAyNSBWZW5kb3IgU3RhdHVzIE5vdGljZQoKQmVjYXVzZSBvZiB0aGUgaW50ZW5zaXZlIGZvY3VzIG9uIGEgc2VwYXJhdGUgcGxhdGZvcm0gbWlncmF0aW9uLCB0aGUgdGVhbSBoYXMgbm90IGJlZW4KYWJsZSB0byBkZWxpdmVyIHRoZSBjb250cmFjdGVkIHJlcG9ydGluZyB3b3JrIHRoaXMgcXVhcnRlci4KCkJlY2F1c2UgdGhlIG1haW50ZW5hbmNlIHdpbmRvdyBmb3IgdGhlIGVudmlyb25tZW50IHdhcyBzbyBsaW1pdGVkLCB0aGUgYWdyZWVkCnN1cHBvcnQgdGllciBjb3VsZCBub3QgYmUgcHJvdmlkZWQgYXQgdGhpcyB0aW1lLgoKVGhlIHRlYW0gd2lsbCBjb250aW51ZSB0byByZXZpZXcgY2FwYWNpdHkgYW5kIGdyYWR1YWxseSBpbmNyZWFzZSBzZXJ2aWNlIGxldmVscyBhcwphcHByb3ByaWF0ZS4KCkFjbWUgQ29ycCByZXF1ZXN0ZWQgdXB0aW1lIGxvZ3MgYW5kIGluY2lkZW50IHJlY29yZHMgdG8gdmVyaWZ5IHdoZXRoZXIKdGhlIGRlbGl2ZXJhYmxlcyByZXF1aXJlZCBieSB0aGUgTWFzdGVyIFNlcnZpY2VzIEFncmVlbWVudCB3ZXJlIGNvbXBsZXRlZC4K"
+          },
+          "metadata": {
+            "fileName": "vendor-status-notice-excerpt.txt",
+            "fileType": "TXT",
+            "sourcePath": "sample-records\\vendor-status-notice-excerpt.txt"
+          }
+        },
+        "pageImages": [],
+        "metadata": {
+          "fileName": "vendor-status-notice-excerpt.txt",
+          "fileType": "TXT",
+          "localPreloader": true
+        },
+        "manifestHash": "sha256:304a4571efbbf9f550eabe8b49eb57cf7bd4ba077dad0f34a60e9d8146145cd8"
+      },
+      "sourceVaultVerified": true
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_agreement_language_sample_0_service_levels_will_in",
+      "title": "Service level agreement: agreement language sample",
+      "category": "Service level agreement",
+      "priority": "Medium",
+      "documentId": "doc_agreement_language_sample",
+      "page": 1,
+      "quote": "Service levels will increase as tolerated and review will occur at a later date.",
+      "meaning": "Local preloader flagged this as potentially useful meeting evidence. Verify context before using.",
+      "strategicUse": "Use as a source-linked prompt for pre-meeting review or live quote retrieval.",
+      "question": "Can you explain how this language from Exhibit A should be applied in the contract discussion?",
+      "likelyDefense": "The other side may argue the quote is general guidance, context-dependent, or not the governing contract term.",
+      "counter": "Ask for the specific record, data, decision-maker, and written basis that connects or distinguishes this language.",
+      "tags": [
+        "Local preloader",
+        "Service level agreement",
+        "Imported",
+        "Uptime data"
+      ],
+      "confidence": 90,
+      "packetReady": false,
+      "verificationStatus": "cited"
+    },
+    {
+      "id": "ev_agreement_language_sample_1_the_vendor_will_gradua",
+      "title": "Service level agreement: agreement language sample",
+      "category": "Service level agreement",
+      "priority": "Low",
+      "documentId": "doc_agreement_language_sample",
+      "page": 1,
+      "quote": "The vendor will gradually increase service levels as appropriate.",
+      "meaning": "Local preloader flagged this as potentially useful meeting evidence. Verify context before using.",
+      "strategicUse": "Use as a source-linked prompt for pre-meeting review or live quote retrieval.",
+      "question": "Can you explain how this language from Exhibit A should be applied in the contract discussion?",
+      "likelyDefense": "The other side may argue the quote is general guidance, context-dependent, or not the governing contract term.",
+      "counter": "Ask for the specific record, data, decision-maker, and written basis that connects or distinguishes this language.",
+      "tags": [
+        "Local preloader",
+        "Service level agreement",
+        "Imported",
+        "Uptime data"
+      ],
+      "confidence": 78,
+      "packetReady": false,
+      "verificationStatus": "cited"
+    },
+    {
+      "id": "ev_vendor_status_notice_excerpt_0_the_deliverables_re",
+      "title": "Service level agreement: vendor status notice excerpt",
+      "category": "Service level agreement",
+      "priority": "Medium",
+      "documentId": "doc_vendor_status_notice_excerpt",
+      "page": 1,
+      "quote": "the deliverables required by the Master Services Agreement were completed.",
+      "meaning": "Local preloader flagged this as potentially useful meeting evidence. Verify context before using.",
+      "strategicUse": "Use as a source-linked prompt for pre-meeting review or live quote retrieval.",
+      "question": "Can you explain how this language from Exhibit B should be applied in the contract discussion?",
+      "likelyDefense": "The other side may argue the quote is general guidance, context-dependent, or not the governing contract term.",
+      "counter": "Ask for the specific record, data, decision-maker, and written basis that connects or distinguishes this language.",
+      "tags": [
+        "Local preloader",
+        "Service level agreement",
+        "Imported",
+        "Support escalation",
+        "Acceptance criteria",
+        "Uptime data"
+      ],
+      "confidence": 86,
+      "packetReady": false,
+      "verificationStatus": "cited"
+    },
+    {
+      "id": "ev_vendor_status_notice_excerpt_1_the_team_will_conti",
+      "title": "Service level agreement: vendor status notice excerpt",
+      "category": "Service level agreement",
+      "priority": "Medium",
+      "documentId": "doc_vendor_status_notice_excerpt",
+      "page": 1,
+      "quote": "The team will continue to review capacity and gradually increase service levels as",
+      "meaning": "Local preloader flagged this as potentially useful meeting evidence. Verify context before using.",
+      "strategicUse": "Use as a source-linked prompt for pre-meeting review or live quote retrieval.",
+      "question": "Can you explain how this language from Exhibit B should be applied in the contract discussion?",
+      "likelyDefense": "The other side may argue the quote is general guidance, context-dependent, or not the governing contract term.",
+      "counter": "Ask for the specific record, data, decision-maker, and written basis that connects or distinguishes this language.",
+      "tags": [
+        "Local preloader",
+        "Service level agreement",
+        "Imported",
+        "Support escalation",
+        "Acceptance criteria",
+        "Uptime data"
+      ],
+      "confidence": 82,
+      "packetReady": false,
+      "verificationStatus": "cited"
+    },
+    {
+      "id": "ev_vendor_status_notice_excerpt_2_acme_corp_requested",
+      "title": "Support escalation: vendor status notice excerpt",
+      "category": "Support escalation",
+      "priority": "Low",
+      "documentId": "doc_vendor_status_notice_excerpt",
+      "page": 1,
+      "quote": "Acme Corp requested uptime logs and incident records to verify whether",
+      "meaning": "Local preloader flagged this as potentially useful meeting evidence. Verify context before using.",
+      "strategicUse": "Use as a source-linked prompt for pre-meeting review or live quote retrieval.",
+      "question": "Can you explain how this language from Exhibit B should be applied in the contract discussion?",
+      "likelyDefense": "The other side may argue the quote is general guidance, context-dependent, or not the governing contract term.",
+      "counter": "Ask for the specific record, data, decision-maker, and written basis that connects or distinguishes this language.",
+      "tags": [
+        "Local preloader",
+        "Support escalation",
+        "Imported",
+        "Service level agreement",
+        "Acceptance criteria",
+        "Uptime data"
+      ],
+      "confidence": 78,
+      "packetReady": false,
+      "verificationStatus": "cited"
+    },
+    {
+      "id": "ev_vendor_status_notice_excerpt_3_because_of_the_inte",
+      "title": "Uptime data: vendor status notice excerpt",
+      "category": "Uptime data",
+      "priority": "Low",
+      "documentId": "doc_vendor_status_notice_excerpt",
+      "page": 1,
+      "quote": "Because of the intensive focus on a separate platform migration, the team has not been",
+      "meaning": "Local preloader flagged this as potentially useful meeting evidence. Verify context before using.",
+      "strategicUse": "Use as a source-linked prompt for pre-meeting review or live quote retrieval.",
+      "question": "Can you explain how this language from Exhibit B should be applied in the contract discussion?",
+      "likelyDefense": "The other side may argue the quote is general guidance, context-dependent, or not the governing contract term.",
+      "counter": "Ask for the specific record, data, decision-maker, and written basis that connects or distinguishes this language.",
+      "tags": [
+        "Local preloader",
+        "Uptime data",
+        "Imported",
+        "Support escalation",
+        "Service level agreement",
+        "Acceptance criteria"
+      ],
+      "confidence": 74,
+      "packetReady": false,
+      "verificationStatus": "cited"
+    },
+    {
+      "id": "ev_vendor_status_notice_excerpt_4_able_to_deliver_the",
+      "title": "Uptime data: vendor status notice excerpt",
+      "category": "Uptime data",
+      "priority": "Low",
+      "documentId": "doc_vendor_status_notice_excerpt",
+      "page": 1,
+      "quote": "able to deliver the contracted reporting work this quarter.",
+      "meaning": "Local preloader flagged this as potentially useful meeting evidence. Verify context before using.",
+      "strategicUse": "Use as a source-linked prompt for pre-meeting review or live quote retrieval.",
+      "question": "Can you explain how this language from Exhibit B should be applied in the contract discussion?",
+      "likelyDefense": "The other side may argue the quote is general guidance, context-dependent, or not the governing contract term.",
+      "counter": "Ask for the specific record, data, decision-maker, and written basis that connects or distinguishes this language.",
+      "tags": [
+        "Local preloader",
+        "Uptime data",
+        "Imported",
+        "Support escalation",
+        "Service level agreement",
+        "Acceptance criteria"
+      ],
+      "confidence": 70,
+      "packetReady": false,
+      "verificationStatus": "cited"
+    },
+    {
+      "id": "ev_vendor_status_notice_excerpt_5_support_tier_could_",
+      "title": "Service level agreement: vendor status notice excerpt",
+      "category": "Service level agreement",
+      "priority": "Low",
+      "documentId": "doc_vendor_status_notice_excerpt",
+      "page": 1,
+      "quote": "support tier could not be provided at this time.",
+      "meaning": "Local preloader flagged this as potentially useful meeting evidence. Verify context before using.",
+      "strategicUse": "Use as a source-linked prompt for pre-meeting review or live quote retrieval.",
+      "question": "Can you explain how this language from Exhibit B should be applied in the contract discussion?",
+      "likelyDefense": "The other side may argue the quote is general guidance, context-dependent, or not the governing contract term.",
+      "counter": "Ask for the specific record, data, decision-maker, and written basis that connects or distinguishes this language.",
+      "tags": [
+        "Local preloader",
+        "Service level agreement",
+        "Imported",
+        "Support escalation",
+        "Acceptance criteria",
+        "Uptime data"
+      ],
+      "confidence": 70,
+      "packetReady": false,
+      "verificationStatus": "cited"
+    }
+  ],
+  "issues": [
+    {
+      "id": "issue_service_level_agreement",
+      "title": "Service level agreement",
+      "description": "5 source-linked cards from the imported case folder.",
+      "evidenceIds": [
+        "ev_agreement_language_sample_0_service_levels_will_in",
+        "ev_agreement_language_sample_1_the_vendor_will_gradua",
+        "ev_vendor_status_notice_excerpt_0_the_deliverables_re",
+        "ev_vendor_status_notice_excerpt_1_the_team_will_conti",
+        "ev_vendor_status_notice_excerpt_5_support_tier_could_"
+      ],
+      "status": "Open",
+      "meetingPriority": 1
+    },
+    {
+      "id": "issue_support_escalation",
+      "title": "Support escalation",
+      "description": "1 source-linked card from the imported case folder.",
+      "evidenceIds": [
+        "ev_vendor_status_notice_excerpt_2_acme_corp_requested"
+      ],
+      "status": "Open",
+      "meetingPriority": 2
+    },
+    {
+      "id": "issue_uptime_data",
+      "title": "Uptime data",
+      "description": "2 source-linked cards from the imported case folder.",
+      "evidenceIds": [
+        "ev_vendor_status_notice_excerpt_3_because_of_the_inte",
+        "ev_vendor_status_notice_excerpt_4_able_to_deliver_the"
+      ],
+      "status": "Open",
+      "meetingPriority": 3
+    }
+  ],
+  "timeline": [
+    {
+      "id": "time_doc_vendor_status_notice_excerpt_december_4_2025_0",
+      "date": "2025-12-04",
+      "event": "Exhibit B: vendor status notice excerpt references December 4, 2025",
+      "documentId": "doc_vendor_status_notice_excerpt",
+      "page": 1,
+      "quote": "vendor status notice excerpt",
+      "issue": "Support escalation"
+    }
+  ],
+  "missingRecords": [
+    {
+      "id": "mr_decision_records",
+      "requested": "Change-order approvals, uptime logs, and meeting notes tied to these terms",
+      "dateRequested": "2026-06-17",
+      "responsibleParty": "Vendor / account team",
+      "status": "Missing",
+      "relatedIssue": "Implementation record",
+      "whyItMatters": "The imported terms show expectations and definitions, but implementation still needs date-by-date records.",
+      "followUp": "Ask for the written basis, decision-maker, dates, and logs connecting these documents to the contract decision."
+    }
+  ],
+  "meetingNotes": []
+}

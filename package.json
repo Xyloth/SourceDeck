@@ -1,0 +1,52 @@
+{
+  "name": "sourcedeck",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Local-first evidence command center for high-stakes meetings.",
+  "author": "James Dye / XyFlow Innovations LLC",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "app": "electron electron/main.cjs",
+    "app:build": "tsc -b && vite build && electron electron/main.cjs",
+    "case:import": "node scripts/build-case-workspace.mjs",
+    "calibration:elapsed": "node scripts/calibration-elapsed.mjs",
+    "calibration:finish": "node scripts/calibration-finish.mjs",
+    "calibration:validate": "node scripts/validate-calibration-log.mjs",
+    "bundle:verify": "tsx scripts/verify-sourcestack-bundle.ts",
+    "gauntlet:report": "tsx scripts/run-source-gauntlet.ts",
+    "smart-search:sidecar": "node scripts/smart-search-sidecar.mjs",
+    "speech:sidecar": "node scripts/speech-transcription-sidecar.mjs",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.17.0",
+    "mammoth": "^1.12.0",
+    "pdfjs-dist": "^5.7.284",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "word-extractor": "^1.0.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.12.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "electron": "^42.4.0",
+    "eslint": "^10.3.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
+    "tsx": "^4.22.4",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.59.2",
+    "vite": "^8.0.12",
+    "vitest": "^4.1.8"
+  }
+}

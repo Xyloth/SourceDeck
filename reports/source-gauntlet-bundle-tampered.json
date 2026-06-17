@@ -1,0 +1,410 @@
+{
+  "format": "sourcedeck.sourcestack-bundle.v1",
+  "generatedAt": "2026-06-17T00:09:20.254Z",
+  "caseName": "CLI fixture",
+  "graph": {
+    "documents": {
+      "doc_a": {
+        "id": "doc_a",
+        "contentHash": "sha256:tampered-cli",
+        "source": "Exhibit 12",
+        "title": "Service Notice",
+        "mime": "text/plain",
+        "ingestedAt": "2026-06-02T00:00:00.000Z",
+        "metadata": {},
+        "sensitivity": "unknown"
+      },
+      "doc_b": {
+        "id": "doc_b",
+        "contentHash": "sha256:fixture-a",
+        "source": "Exhibit 12",
+        "title": "Duplicate Service Notice",
+        "mime": "text/plain",
+        "ingestedAt": "2026-06-02T00:00:00.000Z",
+        "metadata": {},
+        "sensitivity": "unknown"
+      }
+    },
+    "pages": {
+      "page_a_1": {
+        "id": "page_a_1",
+        "documentId": "doc_a",
+        "index": 1,
+        "imageHash": "sha256:page-a",
+        "ocrQuality": 0.95,
+        "layoutBlocks": [
+          {
+            "id": "page_a_1:block:0",
+            "kind": "text",
+            "text": "Platform uptime was not delivered and the vendor failed to scale that month.",
+            "confidence": 0.95
+          }
+        ]
+      }
+    },
+    "spans": {
+      "span_a_1": {
+        "id": "span_a_1",
+        "documentId": "doc_a",
+        "pageId": "page_a_1",
+        "quadPoints": [
+          [
+            0,
+            0,
+            100,
+            20
+          ]
+        ],
+        "charRange": [
+          0,
+          76
+        ],
+        "semanticFingerprint": "fixture-span",
+        "structuralPath": [
+          "p1",
+          "s1"
+        ],
+        "exactText": "Platform uptime was not delivered and the vendor failed to scale that month.",
+        "anchorStatus": "stable",
+        "quality": 0.95
+      },
+      "span_stale": {
+        "id": "span_stale",
+        "documentId": "doc_a",
+        "pageId": "page_a_1",
+        "quadPoints": [
+          [
+            0,
+            0,
+            100,
+            20
+          ]
+        ],
+        "charRange": [
+          0,
+          76
+        ],
+        "semanticFingerprint": "fixture-span",
+        "structuralPath": [
+          "p1",
+          "s1"
+        ],
+        "exactText": "Platform uptime was not delivered and the vendor failed to scale that month.",
+        "anchorStatus": "anchor_stale",
+        "quality": 0.95
+      }
+    },
+    "mediaSegments": {},
+    "evidenceCards": {
+      "card_verified": {
+        "id": "card_verified",
+        "assertion": "The uptime SLA was breached.",
+        "sourceDocumentId": "doc_a",
+        "pageId": "page_a_1",
+        "spanId": "span_a_1",
+        "exactQuoteOrSegment": "Platform uptime was not delivered",
+        "plainLanguageMeaning": "The record acknowledges the SLA breach.",
+        "tags": [
+          "services",
+          "admission"
+        ],
+        "issueLinks": [],
+        "strengthScore": {
+          "overall": 94,
+          "sourceTier": 90,
+          "directness": 90,
+          "corroborationCount": 0,
+          "contradictionLoad": 0,
+          "authentication": 100,
+          "currency": 85,
+          "anchorQuality": 90,
+          "humanVerification": 100,
+          "domainWeight": 70,
+          "reasons": [
+            "gauntlet fixture"
+          ]
+        },
+        "contradictionLinks": [],
+        "corroborationLinks": [],
+        "supersessionLinks": [],
+        "verificationStatus": "verified",
+        "provenanceId": "prov_fixture"
+      },
+      "card_cited": {
+        "id": "card_cited",
+        "assertion": "The uptime SLA was breached.",
+        "sourceDocumentId": "doc_a",
+        "pageId": "page_a_1",
+        "spanId": "span_a_1",
+        "exactQuoteOrSegment": "Platform uptime was not delivered",
+        "plainLanguageMeaning": "The record acknowledges the SLA breach.",
+        "tags": [
+          "services",
+          "admission"
+        ],
+        "issueLinks": [],
+        "strengthScore": {
+          "overall": 55,
+          "sourceTier": 90,
+          "directness": 90,
+          "corroborationCount": 0,
+          "contradictionLoad": 0,
+          "authentication": 20,
+          "currency": 85,
+          "anchorQuality": 90,
+          "humanVerification": 0,
+          "domainWeight": 70,
+          "reasons": [
+            "gauntlet fixture"
+          ]
+        },
+        "contradictionLinks": [],
+        "corroborationLinks": [],
+        "supersessionLinks": [],
+        "verificationStatus": "cited",
+        "provenanceId": "prov_fixture"
+      },
+      "card_stale": {
+        "id": "card_stale",
+        "assertion": "The uptime SLA was breached.",
+        "sourceDocumentId": "doc_a",
+        "pageId": "page_a_1",
+        "spanId": "span_stale",
+        "exactQuoteOrSegment": "Platform uptime was not delivered",
+        "plainLanguageMeaning": "The record acknowledges the SLA breach.",
+        "tags": [
+          "services",
+          "admission"
+        ],
+        "issueLinks": [],
+        "strengthScore": {
+          "overall": 94,
+          "sourceTier": 90,
+          "directness": 90,
+          "corroborationCount": 0,
+          "contradictionLoad": 0,
+          "authentication": 100,
+          "currency": 85,
+          "anchorQuality": 90,
+          "humanVerification": 100,
+          "domainWeight": 70,
+          "reasons": [
+            "gauntlet fixture"
+          ]
+        },
+        "contradictionLinks": [],
+        "corroborationLinks": [],
+        "supersessionLinks": [],
+        "verificationStatus": "verified",
+        "provenanceId": "prov_fixture"
+      }
+    },
+    "claims": {},
+    "issueTheories": {},
+    "edges": [],
+    "events": {},
+    "obligations": {},
+    "recordGaps": {},
+    "packets": {},
+    "provenance": {
+      "prov_fixture": {
+        "id": "prov_fixture",
+        "inputs": [
+          "gauntlet"
+        ],
+        "at": "2026-06-02T00:00:00.000Z",
+        "actor": "gauntlet"
+      }
+    },
+    "auditEvents": []
+  },
+  "sourceArtifacts": [],
+  "sourceVaultManifests": [],
+  "packetManifests": [
+    {
+      "format": "sourcedeck.packet-manifest.v1",
+      "packetId": "bundle-packet:sha256:ed19dab17479eaf5a7a92502a66b8fbe02f644fd2e839bb7f8ce32f32a665e0a",
+      "packetType": "forensic_bundle",
+      "packetHash": "sha256:7ac1019696cd41c247cdc6733a997ffabcb2bd197df113c362c3fa8686f89b43",
+      "sourceDocumentHashes": [
+        {
+          "documentId": "doc_a",
+          "contentHash": "sha256:fixture-a"
+        }
+      ],
+      "sourceVaultHashes": [],
+      "pageHashes": [
+        {
+          "pageId": "page_a_1",
+          "imageHash": "sha256:page-a",
+          "layoutHash": "sha256:6175abb7f181af4de7425b7e0fc96c82c4f876e7c9bd43e9a3924c8440c782e7",
+          "ocrQuality": 0.95
+        }
+      ],
+      "includedEvidenceCardIds": [
+        "card_verified"
+      ],
+      "spanReferences": [
+        {
+          "cardId": "card_verified",
+          "documentId": "doc_a",
+          "pageId": "page_a_1",
+          "spanId": "span_a_1",
+          "quote": "Platform uptime was not delivered"
+        }
+      ],
+      "redactionOperations": [],
+      "exportTimestamp": "2026-06-17T00:09:20.253Z",
+      "issuerIdentity": "CLI fixture",
+      "manifestHash": "sha256:add9b58fddf7eba94f996e295fe05d3b3c6845a76ae7e58c1f66fd0d8736f2b4"
+    }
+  ],
+  "sourceArtifactVerifications": [],
+  "sourceVaultVerifications": [],
+  "packetManifestVerifications": [
+    {
+      "ok": true,
+      "manifestHash": "sha256:add9b58fddf7eba94f996e295fe05d3b3c6845a76ae7e58c1f66fd0d8736f2b4"
+    }
+  ],
+  "packetManifestSignatureVerifications": [
+    {
+      "ok": false,
+      "reason": "manifest has no cryptographic signature"
+    }
+  ],
+  "signoffProvenance": {
+    "entries": [],
+    "staleCount": 0
+  },
+  "counts": {
+    "documents": 2,
+    "pages": 1,
+    "spans": 2,
+    "evidenceCards": 3,
+    "events": 0,
+    "sourceArtifacts": 0,
+    "sourceVaults": 0,
+    "sourceVaultPageImages": 0,
+    "trustEvents": 0,
+    "caseArtifacts": 0,
+    "evidenceSignoffs": 0,
+    "staleEvidenceSignoffs": 0,
+    "contradictions": 0,
+    "graphInvariantFailures": 1,
+    "packetHardWallFailures": 0,
+    "packetManifests": 1
+  },
+  "diagnostics": [
+    {
+      "cardId": "card_verified",
+      "assertion": "The uptime SLA was breached.",
+      "verificationStatus": "verified",
+      "documentId": "doc_a",
+      "documentTitle": "Service Notice",
+      "pageId": "page_a_1",
+      "spanId": "span_a_1",
+      "charRange": [
+        0,
+        76
+      ],
+      "exactTextPreview": "Platform uptime was not delivered and the vendor failed to scale that month.",
+      "anchorStatus": "stable",
+      "sourceTerminates": true,
+      "quoteExact": true,
+      "spanBackedBySource": true,
+      "anchorUsable": true,
+      "canPromoteToVerified": true,
+      "packetEligible": true,
+      "hardWallFailures": [],
+      "blockers": []
+    },
+    {
+      "cardId": "card_cited",
+      "assertion": "The uptime SLA was breached.",
+      "verificationStatus": "cited",
+      "documentId": "doc_a",
+      "documentTitle": "Service Notice",
+      "pageId": "page_a_1",
+      "spanId": "span_a_1",
+      "charRange": [
+        0,
+        76
+      ],
+      "exactTextPreview": "Platform uptime was not delivered and the vendor failed to scale that month.",
+      "anchorStatus": "stable",
+      "sourceTerminates": true,
+      "quoteExact": true,
+      "spanBackedBySource": true,
+      "anchorUsable": true,
+      "canPromoteToVerified": true,
+      "packetEligible": false,
+      "hardWallFailures": [
+        {
+          "cardId": "card_cited",
+          "reason": "packet hard wall: card is cited, not verified",
+          "severity": "hard_wall"
+        }
+      ],
+      "blockers": [
+        "packet hard wall: card is cited, not verified"
+      ]
+    },
+    {
+      "cardId": "card_stale",
+      "assertion": "The uptime SLA was breached.",
+      "verificationStatus": "verified",
+      "documentId": "doc_a",
+      "documentTitle": "Service Notice",
+      "pageId": "page_a_1",
+      "spanId": "span_stale",
+      "charRange": [
+        0,
+        76
+      ],
+      "exactTextPreview": "Platform uptime was not delivered and the vendor failed to scale that month.",
+      "anchorStatus": "anchor_stale",
+      "sourceTerminates": true,
+      "quoteExact": true,
+      "spanBackedBySource": true,
+      "anchorUsable": false,
+      "canPromoteToVerified": false,
+      "packetEligible": false,
+      "hardWallFailures": [
+        {
+          "cardId": "card_stale",
+          "reason": "packet hard wall: source anchor is anchor_stale",
+          "severity": "hard_wall"
+        }
+      ],
+      "blockers": [
+        "packet hard wall: source anchor is anchor_stale",
+        "cannot verify card while anchor is anchor_stale"
+      ]
+    }
+  ],
+  "graphInvariantFailures": [
+    {
+      "cardId": "card_stale",
+      "reason": "evidence card source anchor is anchor_stale",
+      "severity": "hard_wall"
+    }
+  ],
+  "packetHardWallFailures": [],
+  "duplicateDocuments": [
+    {
+      "contentHash": "sha256:fixture-a",
+      "documentIds": [
+        "doc_a",
+        "doc_b"
+      ],
+      "titles": [
+        "Service Notice",
+        "Duplicate Service Notice"
+      ]
+    }
+  ],
+  "bitemporalContradictions": [],
+  "graphHash": "sha256:175e41249fd617f4d3c99286b7a52d9a6e680a796d16705b24052c3ad4d012f0",
+  "bundleHash": "sha256:7e77eedef33767ba7442c162d7b67f1072fd3194e91e8288041d043e79d64371"
+}

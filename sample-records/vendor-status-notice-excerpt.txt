@@ -1,0 +1,13 @@
+December 4, 2025 Vendor Status Notice
+
+Because of the intensive focus on a separate platform migration, the team has not been
+able to deliver the contracted reporting work this quarter.
+
+Because the maintenance window for the environment was so limited, the agreed
+support tier could not be provided at this time.
+
+The team will continue to review capacity and gradually increase service levels as
+appropriate.
+
+Acme Corp requested uptime logs and incident records to verify whether
+the deliverables required by the Master Services Agreement were completed.

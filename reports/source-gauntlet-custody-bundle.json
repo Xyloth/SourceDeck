@@ -1,0 +1,626 @@
+{
+  "format": "sourcedeck.sourcestack-bundle.v1",
+  "generatedAt": "2026-06-17T00:13:10.793Z",
+  "caseName": "SourceStack custody gauntlet fixture",
+  "graph": {
+    "documents": {
+      "doc_a": {
+        "id": "doc_a",
+        "contentHash": "sha256:fixture-a",
+        "source": "Exhibit 12",
+        "title": "Service Notice",
+        "mime": "text/plain",
+        "ingestedAt": "2026-06-02T00:00:00.000Z",
+        "metadata": {},
+        "sensitivity": "unknown"
+      },
+      "doc_b": {
+        "id": "doc_b",
+        "contentHash": "sha256:fixture-a",
+        "source": "Exhibit 12",
+        "title": "Duplicate Service Notice",
+        "mime": "text/plain",
+        "ingestedAt": "2026-06-02T00:00:00.000Z",
+        "metadata": {},
+        "sensitivity": "unknown"
+      },
+      "doc_report_custody": {
+        "id": "doc_report_custody",
+        "contentHash": "sha256:90a06350ecc57d7ac8f90821ad091b2206245a80b0843501f1af373c6d416b66",
+        "source": "gauntlet reporter",
+        "title": "Gauntlet custody report artifact",
+        "mime": "text/plain",
+        "ingestedAt": "2026-06-02T00:00:00.000Z",
+        "metadata": {
+          "sourceArtifactId": "source-artifact:sha256:90a06350ecc57d7ac8f90821ad091b2206245a80b0843501f1af373c6d416b66",
+          "sourceVaultId": "vault_report_custody",
+          "sourceVaultManifestHash": "sha256:0138d26326fc7c3f8d9dca71c7e6a5127217a375e8a42b7ad21d171f5f96423c",
+          "sourceVaultOriginalHash": "sha256:bec8dda410b23df7fd55689321a4cd72a920cf328e2e5c2f9af88129de16da13"
+        },
+        "sensitivity": "unknown"
+      }
+    },
+    "pages": {
+      "page_a_1": {
+        "id": "page_a_1",
+        "documentId": "doc_a",
+        "index": 1,
+        "imageHash": "sha256:page-a",
+        "ocrQuality": 0.95,
+        "layoutBlocks": [
+          {
+            "id": "page_a_1:block:0",
+            "kind": "text",
+            "text": "Platform uptime was not delivered and the vendor failed to scale that month.",
+            "confidence": 0.95
+          }
+        ]
+      },
+      "doc_report_custody:page:1": {
+        "id": "doc_report_custody:page:1",
+        "documentId": "doc_report_custody",
+        "index": 1,
+        "imageHash": "sha256:f33dbb570a70ea3e675f37d794e72918f74ba3266ef4656bfefb2b54ec5a8279",
+        "ocrQuality": 0.99,
+        "layoutBlocks": [
+          {
+            "id": "doc_report_custody:page:1:full_text",
+            "kind": "text",
+            "text": "The generated custody bundle includes a durable source artifact and ledger event.",
+            "confidence": 0.99
+          },
+          {
+            "id": "doc_report_custody:page:1:block:0",
+            "kind": "text",
+            "text": "The generated custody bundle includes a durable source artifact and ledger event.",
+            "confidence": 0.99
+          }
+        ]
+      }
+    },
+    "spans": {
+      "span_a_1": {
+        "id": "span_a_1",
+        "documentId": "doc_a",
+        "pageId": "page_a_1",
+        "quadPoints": [
+          [
+            0,
+            0,
+            100,
+            20
+          ]
+        ],
+        "charRange": [
+          0,
+          76
+        ],
+        "semanticFingerprint": "fixture-span",
+        "structuralPath": [
+          "p1",
+          "s1"
+        ],
+        "exactText": "Platform uptime was not delivered and the vendor failed to scale that month.",
+        "anchorStatus": "stable",
+        "quality": 0.95
+      },
+      "span_stale": {
+        "id": "span_stale",
+        "documentId": "doc_a",
+        "pageId": "page_a_1",
+        "quadPoints": [
+          [
+            0,
+            0,
+            100,
+            20
+          ]
+        ],
+        "charRange": [
+          0,
+          76
+        ],
+        "semanticFingerprint": "fixture-span",
+        "structuralPath": [
+          "p1",
+          "s1"
+        ],
+        "exactText": "Platform uptime was not delivered and the vendor failed to scale that month.",
+        "anchorStatus": "anchor_stale",
+        "quality": 0.95
+      }
+    },
+    "mediaSegments": {},
+    "evidenceCards": {
+      "card_verified": {
+        "id": "card_verified",
+        "assertion": "The uptime SLA was breached.",
+        "sourceDocumentId": "doc_a",
+        "pageId": "page_a_1",
+        "spanId": "span_a_1",
+        "exactQuoteOrSegment": "Platform uptime was not delivered",
+        "plainLanguageMeaning": "The record acknowledges the SLA breach.",
+        "tags": [
+          "services",
+          "admission"
+        ],
+        "issueLinks": [],
+        "strengthScore": {
+          "overall": 94,
+          "sourceTier": 90,
+          "directness": 90,
+          "corroborationCount": 0,
+          "contradictionLoad": 0,
+          "authentication": 100,
+          "currency": 85,
+          "anchorQuality": 90,
+          "humanVerification": 100,
+          "domainWeight": 70,
+          "reasons": [
+            "gauntlet fixture"
+          ]
+        },
+        "contradictionLinks": [],
+        "corroborationLinks": [],
+        "supersessionLinks": [],
+        "verificationStatus": "verified",
+        "provenanceId": "prov_fixture"
+      },
+      "card_cited": {
+        "id": "card_cited",
+        "assertion": "The uptime SLA was breached.",
+        "sourceDocumentId": "doc_a",
+        "pageId": "page_a_1",
+        "spanId": "span_a_1",
+        "exactQuoteOrSegment": "Platform uptime was not delivered",
+        "plainLanguageMeaning": "The record acknowledges the SLA breach.",
+        "tags": [
+          "services",
+          "admission"
+        ],
+        "issueLinks": [],
+        "strengthScore": {
+          "overall": 55,
+          "sourceTier": 90,
+          "directness": 90,
+          "corroborationCount": 0,
+          "contradictionLoad": 0,
+          "authentication": 20,
+          "currency": 85,
+          "anchorQuality": 90,
+          "humanVerification": 0,
+          "domainWeight": 70,
+          "reasons": [
+            "gauntlet fixture"
+          ]
+        },
+        "contradictionLinks": [],
+        "corroborationLinks": [],
+        "supersessionLinks": [],
+        "verificationStatus": "cited",
+        "provenanceId": "prov_fixture"
+      },
+      "card_stale": {
+        "id": "card_stale",
+        "assertion": "The uptime SLA was breached.",
+        "sourceDocumentId": "doc_a",
+        "pageId": "page_a_1",
+        "spanId": "span_stale",
+        "exactQuoteOrSegment": "Platform uptime was not delivered",
+        "plainLanguageMeaning": "The record acknowledges the SLA breach.",
+        "tags": [
+          "services",
+          "admission"
+        ],
+        "issueLinks": [],
+        "strengthScore": {
+          "overall": 94,
+          "sourceTier": 90,
+          "directness": 90,
+          "corroborationCount": 0,
+          "contradictionLoad": 0,
+          "authentication": 100,
+          "currency": 85,
+          "anchorQuality": 90,
+          "humanVerification": 100,
+          "domainWeight": 70,
+          "reasons": [
+            "gauntlet fixture"
+          ]
+        },
+        "contradictionLinks": [],
+        "corroborationLinks": [],
+        "supersessionLinks": [],
+        "verificationStatus": "verified",
+        "provenanceId": "prov_fixture"
+      }
+    },
+    "claims": {},
+    "issueTheories": {},
+    "edges": [],
+    "events": {},
+    "obligations": {},
+    "recordGaps": {},
+    "packets": {},
+    "provenance": {
+      "prov_fixture": {
+        "id": "prov_fixture",
+        "inputs": [
+          "gauntlet"
+        ],
+        "at": "2026-06-02T00:00:00.000Z",
+        "actor": "gauntlet"
+      }
+    },
+    "auditEvents": []
+  },
+  "sourceArtifacts": [
+    {
+      "format": "sourcedeck.source-artifact.v1",
+      "artifactId": "source-artifact:sha256:90a06350ecc57d7ac8f90821ad091b2206245a80b0843501f1af373c6d416b66",
+      "documentId": "doc_report_custody",
+      "title": "Gauntlet custody report artifact",
+      "source": "gauntlet reporter",
+      "mediaType": "text/plain",
+      "contentHash": "sha256:90a06350ecc57d7ac8f90821ad091b2206245a80b0843501f1af373c6d416b66",
+      "byteLength": 81,
+      "ingestedAt": "2026-06-02T00:00:00.000Z",
+      "sensitivity": "unknown",
+      "payload": {
+        "encoding": "utf8",
+        "data": "The generated custody bundle includes a durable source artifact and ledger event."
+      },
+      "pages": [
+        {
+          "id": "doc_report_custody:page:1",
+          "documentId": "doc_report_custody",
+          "index": 1,
+          "text": "The generated custody bundle includes a durable source artifact and ledger event.",
+          "textHash": "sha256:90a06350ecc57d7ac8f90821ad091b2206245a80b0843501f1af373c6d416b66",
+          "imageHash": "sha256:f33dbb570a70ea3e675f37d794e72918f74ba3266ef4656bfefb2b54ec5a8279",
+          "ocrQuality": 0.99,
+          "geometry": {
+            "width": 612,
+            "height": 792,
+            "unit": "pt",
+            "rotation": 0,
+            "blocks": [
+              {
+                "id": "doc_report_custody:page:1:block:0",
+                "kind": "text",
+                "text": "The generated custody bundle includes a durable source artifact and ledger event.",
+                "confidence": 0.99,
+                "quadPoints": [
+                  [
+                    72,
+                    72,
+                    468,
+                    18
+                  ]
+                ]
+              }
+            ]
+          },
+          "geometryHash": "sha256:4c1fc799195bb4e995831864638eee868717e1dacb8bacb9fd40cf47d046ee6a",
+          "vault": {
+            "pageImageRecordId": "source-vault:rendered_page_image:doc_report_custody:page:1:sha256:f33dbb570a70ea3e675f37d794e72918f74ba3266ef4656bfefb2b54ec5a8279",
+            "pageImageContentHash": "sha256:f33dbb570a70ea3e675f37d794e72918f74ba3266ef4656bfefb2b54ec5a8279",
+            "renderScale": 1
+          }
+        }
+      ],
+      "sourceVault": {
+        "vaultId": "vault_report_custody",
+        "manifestHash": "sha256:0138d26326fc7c3f8d9dca71c7e6a5127217a375e8a42b7ad21d171f5f96423c",
+        "originalRecordId": "source-vault:original_file:sha256:bec8dda410b23df7fd55689321a4cd72a920cf328e2e5c2f9af88129de16da13",
+        "originalContentHash": "sha256:bec8dda410b23df7fd55689321a4cd72a920cf328e2e5c2f9af88129de16da13"
+      },
+      "metadata": {}
+    }
+  ],
+  "sourceVaultManifests": [
+    {
+      "format": "sourcedeck.source-vault-manifest.v1",
+      "vaultId": "vault_report_custody",
+      "documentId": "doc_report_custody",
+      "createdAt": "2026-06-02T00:00:00.000Z",
+      "original": {
+        "format": "sourcedeck.source-vault-blob.v1",
+        "recordId": "source-vault:original_file:sha256:bec8dda410b23df7fd55689321a4cd72a920cf328e2e5c2f9af88129de16da13",
+        "documentId": "doc_report_custody",
+        "kind": "original_file",
+        "mediaType": "application/pdf",
+        "contentHash": "sha256:bec8dda410b23df7fd55689321a4cd72a920cf328e2e5c2f9af88129de16da13",
+        "byteLength": 30,
+        "createdAt": "2026-06-02T00:00:00.000Z",
+        "payload": {
+          "encoding": "base64",
+          "data": "Z2F1bnRsZXQgcmVwb3J0IG9yaWdpbmFsIGJ5dGVz"
+        },
+        "metadata": {}
+      },
+      "pageImages": [
+        {
+          "format": "sourcedeck.source-vault-blob.v1",
+          "recordId": "source-vault:rendered_page_image:doc_report_custody:page:1:sha256:f33dbb570a70ea3e675f37d794e72918f74ba3266ef4656bfefb2b54ec5a8279",
+          "documentId": "doc_report_custody",
+          "kind": "rendered_page_image",
+          "mediaType": "image/png",
+          "contentHash": "sha256:f33dbb570a70ea3e675f37d794e72918f74ba3266ef4656bfefb2b54ec5a8279",
+          "byteLength": 29,
+          "createdAt": "2026-06-02T00:00:00.000Z",
+          "payload": {
+            "encoding": "base64",
+            "data": "Z2F1bnRsZXQgcmVwb3J0IHJlbmRlcmVkIHBhZ2U="
+          },
+          "metadata": {},
+          "pageId": "doc_report_custody:page:1",
+          "pageIndex": 1,
+          "width": 612,
+          "height": 792,
+          "renderScale": 1
+        }
+      ],
+      "metadata": {},
+      "manifestHash": "sha256:0138d26326fc7c3f8d9dca71c7e6a5127217a375e8a42b7ad21d171f5f96423c"
+    }
+  ],
+  "packetManifests": [
+    {
+      "format": "sourcedeck.packet-manifest.v1",
+      "packetId": "bundle-packet:sha256:515aa201f31ae352f459815e18199182469c635c581a58c5ca00f1dfb4ea25f1",
+      "packetType": "forensic_bundle",
+      "packetHash": "sha256:fe09f349df1a8052653aa3a449389b5fa9d8f3aa461eb30c0592a1599837de5e",
+      "sourceDocumentHashes": [
+        {
+          "documentId": "doc_a",
+          "contentHash": "sha256:fixture-a"
+        }
+      ],
+      "sourceVaultHashes": [],
+      "pageHashes": [
+        {
+          "pageId": "page_a_1",
+          "imageHash": "sha256:page-a",
+          "layoutHash": "sha256:6175abb7f181af4de7425b7e0fc96c82c4f876e7c9bd43e9a3924c8440c782e7",
+          "ocrQuality": 0.95
+        }
+      ],
+      "includedEvidenceCardIds": [
+        "card_verified"
+      ],
+      "spanReferences": [
+        {
+          "cardId": "card_verified",
+          "documentId": "doc_a",
+          "pageId": "page_a_1",
+          "spanId": "span_a_1",
+          "quote": "Platform uptime was not delivered"
+        }
+      ],
+      "redactionOperations": [],
+      "exportTimestamp": "2026-06-17T00:13:10.793Z",
+      "issuerIdentity": "SourceStack custody gauntlet fixture",
+      "manifestHash": "sha256:39744c95e72eba7503ea683942a0567b26d32fc3119f6d75d0c2c683e118a818"
+    }
+  ],
+  "caseStore": {
+    "caseId": "case_report_custody",
+    "createdAt": "2026-06-02T00:00:00.000Z",
+    "artifacts": {},
+    "events": [
+      {
+        "id": "case_report_custody:event:created",
+        "type": "case_created",
+        "actor": "gauntlet-reporter",
+        "at": "2026-06-02T00:00:00.000Z",
+        "targetId": "case_report_custody",
+        "payload": {
+          "caseId": "case_report_custody"
+        },
+        "caseId": "case_report_custody",
+        "eventHash": "sha256:d4310aeab42b5873449a7dd4009fdd08496e9fbab7a28ffd1e1e3889879f6c33"
+      },
+      {
+        "id": "case_report_custody:event:vault",
+        "type": "source_vault_verified",
+        "actor": "gauntlet-reporter",
+        "at": "2026-06-02T00:00:00.500Z",
+        "targetId": "vault_report_custody",
+        "payload": {
+          "documentId": "doc_report_custody",
+          "manifestHash": "sha256:0138d26326fc7c3f8d9dca71c7e6a5127217a375e8a42b7ad21d171f5f96423c",
+          "originalContentHash": "sha256:bec8dda410b23df7fd55689321a4cd72a920cf328e2e5c2f9af88129de16da13",
+          "pageImageCount": 1
+        },
+        "caseId": "case_report_custody",
+        "prevHash": "sha256:d4310aeab42b5873449a7dd4009fdd08496e9fbab7a28ffd1e1e3889879f6c33",
+        "eventHash": "sha256:5779b0fae9f76f6d6085fa466459e92098dc3c41209cca19cd54adf1364b58e7"
+      },
+      {
+        "id": "case_report_custody:event:artifact",
+        "type": "artifact_verified",
+        "actor": "gauntlet-reporter",
+        "at": "2026-06-02T00:00:01.000Z",
+        "targetId": "source-artifact:sha256:90a06350ecc57d7ac8f90821ad091b2206245a80b0843501f1af373c6d416b66",
+        "payload": {
+          "contentHash": "sha256:90a06350ecc57d7ac8f90821ad091b2206245a80b0843501f1af373c6d416b66"
+        },
+        "caseId": "case_report_custody",
+        "prevHash": "sha256:5779b0fae9f76f6d6085fa466459e92098dc3c41209cca19cd54adf1364b58e7",
+        "eventHash": "sha256:7ce33a8a07d8ffeec4bda873c6fb4832d68da9b5f1ae3044d312c8f8c1757d2d"
+      }
+    ],
+    "headHash": "sha256:7ce33a8a07d8ffeec4bda873c6fb4832d68da9b5f1ae3044d312c8f8c1757d2d"
+  },
+  "sourceArtifactVerifications": [
+    {
+      "ok": true,
+      "artifactId": "source-artifact:sha256:90a06350ecc57d7ac8f90821ad091b2206245a80b0843501f1af373c6d416b66",
+      "pageCount": 1
+    }
+  ],
+  "sourceVaultVerifications": [
+    {
+      "ok": true,
+      "vaultId": "vault_report_custody",
+      "manifestHash": "sha256:0138d26326fc7c3f8d9dca71c7e6a5127217a375e8a42b7ad21d171f5f96423c",
+      "originalHash": "sha256:bec8dda410b23df7fd55689321a4cd72a920cf328e2e5c2f9af88129de16da13",
+      "pageImageCount": 1
+    }
+  ],
+  "packetManifestVerifications": [
+    {
+      "ok": true,
+      "manifestHash": "sha256:39744c95e72eba7503ea683942a0567b26d32fc3119f6d75d0c2c683e118a818"
+    }
+  ],
+  "packetManifestSignatureVerifications": [
+    {
+      "ok": false,
+      "reason": "manifest has no cryptographic signature"
+    }
+  ],
+  "caseStoreVerification": {
+    "ok": true,
+    "headHash": "sha256:7ce33a8a07d8ffeec4bda873c6fb4832d68da9b5f1ae3044d312c8f8c1757d2d"
+  },
+  "caseArtifactVerification": {
+    "ok": true,
+    "artifactCount": 0
+  },
+  "signoffProvenance": {
+    "entries": [],
+    "staleCount": 0
+  },
+  "counts": {
+    "documents": 3,
+    "pages": 2,
+    "spans": 2,
+    "evidenceCards": 3,
+    "events": 0,
+    "sourceArtifacts": 1,
+    "sourceVaults": 1,
+    "sourceVaultPageImages": 1,
+    "trustEvents": 3,
+    "caseArtifacts": 0,
+    "evidenceSignoffs": 0,
+    "staleEvidenceSignoffs": 0,
+    "contradictions": 0,
+    "graphInvariantFailures": 1,
+    "packetHardWallFailures": 0,
+    "packetManifests": 1
+  },
+  "diagnostics": [
+    {
+      "cardId": "card_verified",
+      "assertion": "The uptime SLA was breached.",
+      "verificationStatus": "verified",
+      "documentId": "doc_a",
+      "documentTitle": "Service Notice",
+      "pageId": "page_a_1",
+      "spanId": "span_a_1",
+      "charRange": [
+        0,
+        76
+      ],
+      "exactTextPreview": "Platform uptime was not delivered and the vendor failed to scale that month.",
+      "anchorStatus": "stable",
+      "sourceTerminates": true,
+      "quoteExact": true,
+      "spanBackedBySource": true,
+      "anchorUsable": true,
+      "canPromoteToVerified": true,
+      "packetEligible": true,
+      "hardWallFailures": [],
+      "blockers": []
+    },
+    {
+      "cardId": "card_cited",
+      "assertion": "The uptime SLA was breached.",
+      "verificationStatus": "cited",
+      "documentId": "doc_a",
+      "documentTitle": "Service Notice",
+      "pageId": "page_a_1",
+      "spanId": "span_a_1",
+      "charRange": [
+        0,
+        76
+      ],
+      "exactTextPreview": "Platform uptime was not delivered and the vendor failed to scale that month.",
+      "anchorStatus": "stable",
+      "sourceTerminates": true,
+      "quoteExact": true,
+      "spanBackedBySource": true,
+      "anchorUsable": true,
+      "canPromoteToVerified": true,
+      "packetEligible": false,
+      "hardWallFailures": [
+        {
+          "cardId": "card_cited",
+          "reason": "packet hard wall: card is cited, not verified",
+          "severity": "hard_wall"
+        }
+      ],
+      "blockers": [
+        "packet hard wall: card is cited, not verified"
+      ]
+    },
+    {
+      "cardId": "card_stale",
+      "assertion": "The uptime SLA was breached.",
+      "verificationStatus": "verified",
+      "documentId": "doc_a",
+      "documentTitle": "Service Notice",
+      "pageId": "page_a_1",
+      "spanId": "span_stale",
+      "charRange": [
+        0,
+        76
+      ],
+      "exactTextPreview": "Platform uptime was not delivered and the vendor failed to scale that month.",
+      "anchorStatus": "anchor_stale",
+      "sourceTerminates": true,
+      "quoteExact": true,
+      "spanBackedBySource": true,
+      "anchorUsable": false,
+      "canPromoteToVerified": false,
+      "packetEligible": false,
+      "hardWallFailures": [
+        {
+          "cardId": "card_stale",
+          "reason": "packet hard wall: source anchor is anchor_stale",
+          "severity": "hard_wall"
+        }
+      ],
+      "blockers": [
+        "packet hard wall: source anchor is anchor_stale",
+        "cannot verify card while anchor is anchor_stale"
+      ]
+    }
+  ],
+  "graphInvariantFailures": [
+    {
+      "cardId": "card_stale",
+      "reason": "evidence card source anchor is anchor_stale",
+      "severity": "hard_wall"
+    }
+  ],
+  "packetHardWallFailures": [],
+  "duplicateDocuments": [
+    {
+      "contentHash": "sha256:fixture-a",
+      "documentIds": [
+        "doc_a",
+        "doc_b"
+      ],
+      "titles": [
+        "Service Notice",
+        "Duplicate Service Notice"
+      ]
+    }
+  ],
+  "bitemporalContradictions": [],
+  "graphHash": "sha256:a8b071810463ca882b80801a2bc36b710ed9e6850144e6f4d0f45f8aaacd8644",
+  "bundleHash": "sha256:8b51ca6527d141cbf076ce3072fdbabd53372d09b21845515fba756977167c38"
+}
