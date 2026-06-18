@@ -549,21 +549,333 @@ async function getPacketSigningKeyForManifest(
   };
 }
 
-const seedDocuments: SourceDocument[] = [];
+// Demo seed: a fictional vendor / SLA dispute (Acme Corp vs. a service vendor).
+// Entirely synthetic sample data so the app opens with a worked example. No real records.
+const seedDocuments: SourceDocument[] = [
+  {
+    id: "doc_msa_exhibit_a",
+    title: "Master Services Agreement — Service Levels (Exhibit A)",
+    type: "DOCX",
+    date: "2025-01-15",
+    author: "Acme Corp / Northwind Vendor Co.",
+    pages: 1,
+    exhibit: "Exhibit A",
+    tags: ["Service level agreement", "Contract", "Release of claims"],
+    status: "Indexed",
+    extractedText:
+      "The vendor will gradually increase service levels as appropriate.\n\nThe customer agrees that this agreement resolves all issues and releases all claims known or unknown through the date of execution.\n\nService levels will increase as tolerated and review will occur at a later date.",
+    pageTexts: [
+      {
+        page: 1,
+        text: "The vendor will gradually increase service levels as appropriate.\n\nThe customer agrees that this agreement resolves all issues and releases all claims known or unknown through the date of execution.\n\nService levels will increase as tolerated and review will occur at a later date.",
+      },
+    ],
+    textChars: 280,
+    detectedEntities: ["Service Levels", "Release of Claims"],
+  },
+  {
+    id: "doc_status_notice_exhibit_b",
+    title: "Vendor Status Notice — Dec 4, 2025 (Exhibit B)",
+    type: "TXT",
+    date: "2025-12-04",
+    author: "Northwind Vendor Co.",
+    pages: 1,
+    exhibit: "Exhibit B",
+    tags: ["Status notice", "Non-delivery", "Support tier"],
+    status: "Indexed",
+    extractedText:
+      "Because of the intensive focus on a separate platform migration, the team has not been able to deliver the contracted reporting work this quarter.\n\nBecause the maintenance window for the environment was so limited, the agreed support tier could not be provided at this time.\n\nThe team will continue to review capacity and gradually increase service levels as appropriate.\n\nAcme Corp requested uptime logs and incident records to verify whether the deliverables required by the Master Services Agreement were completed.",
+    pageTexts: [
+      {
+        page: 1,
+        text: "Because of the intensive focus on a separate platform migration, the team has not been able to deliver the contracted reporting work this quarter.\n\nBecause the maintenance window for the environment was so limited, the agreed support tier could not be provided at this time.\n\nThe team will continue to review capacity and gradually increase service levels as appropriate.\n\nAcme Corp requested uptime logs and incident records to verify whether the deliverables required by the Master Services Agreement were completed.",
+      },
+    ],
+    textChars: 557,
+    detectedDates: ["December 4, 2025"],
+    detectedEntities: ["Acme Corp", "Master Services Agreement"],
+  },
+];
 
-const seedEvidence: EvidenceCard[] = [];
+const seedEvidence: EvidenceCard[] = [
+  {
+    id: "ev_nondelivery_admission",
+    title: "Written admission: contracted work not delivered",
+    category: "Non-delivery",
+    priority: "Critical",
+    documentId: "doc_status_notice_exhibit_b",
+    page: 1,
+    quote: "the team has not been able to deliver the contracted reporting work this quarter.",
+    meaning:
+      "The vendor admits in writing that a contracted deliverable was missed — the strongest single piece of leverage in the file.",
+    strategicUse:
+      "Open with this admission, then ask what the MSA remedy is. Do not let it get reframed as a one-off.",
+    question:
+      "Your Dec 4 notice says the contracted reporting work was not delivered this quarter — what is the remedy under the MSA?",
+    likelyDefense: "We were focused on a separate platform migration.",
+    counter:
+      "The MSA does not condition the reporting deliverable on your other projects. A competing priority is not a contractual excuse.",
+    tags: ["Admission", "Deliverables", "Exhibit B"],
+    confidence: 95,
+    packetReady: true,
+    verificationStatus: "cited",
+    live: {
+      issue: "Vendor missed a contracted deliverable",
+      say: "Your own notice says the reporting work wasn't delivered. What's the remedy under the MSA?",
+      pull: "Exhibit B, p.1",
+      next: "Get a cure date and remedy on the record",
+    },
+  },
+  {
+    id: "ev_support_tier_breach",
+    title: "Second admitted breach: agreed support tier not provided",
+    category: "Support tier",
+    priority: "High",
+    documentId: "doc_status_notice_exhibit_b",
+    page: 1,
+    quote: "the agreed support tier could not be provided at this time.",
+    meaning:
+      "A second written admission. Two stacked breaches in one notice make the 'isolated incident' framing impossible.",
+    strategicUse: "Stack it on the non-delivery admission so the pattern is undeniable.",
+    question:
+      "The notice also says the agreed support tier wasn't provided — was a credit issued, and under which SLA clause?",
+    likelyDefense: "The maintenance window was limited.",
+    counter: "A limited window doesn't waive the contracted support tier; it triggers the SLA credit.",
+    tags: ["Breach", "Support", "Exhibit B"],
+    confidence: 88,
+    packetReady: true,
+    verificationStatus: "cited",
+  },
+  {
+    id: "ev_vague_sla_escape",
+    title: "Unmeasurable SLA language ('as tolerated', 'a later date')",
+    category: "Service level agreement",
+    priority: "High",
+    documentId: "doc_msa_exhibit_a",
+    page: 1,
+    quote: "Service levels will increase as tolerated and review will occur at a later date.",
+    meaning:
+      "Deliberately unmeasurable wording — 'as tolerated' and 'a later date' can never be objectively breached. This is the escape hatch.",
+    strategicUse: "Force a concrete metric and a fixed review date before agreeing to anything.",
+    question:
+      "What specific metric and what fixed date define this review? 'A later date' isn't enforceable.",
+    likelyDefense: "It's aspirational guidance, not a hard term.",
+    counter:
+      "Then point to the binding SLA metric that does govern — and produce the data showing it was met.",
+    tags: ["Vague terms", "SLA", "Exhibit A"],
+    confidence: 82,
+    packetReady: false,
+    verificationStatus: "cited",
+    live: {
+      issue: "Vendor hides behind vague SLA language",
+      say: "'A later date' isn't a date. I need a number and a date today.",
+      pull: "Exhibit A, p.1",
+      next: "Pin a committed SLA metric + review date",
+    },
+  },
+  {
+    id: "ev_release_of_claims",
+    title: "Release-of-claims trap in the renewal language",
+    category: "Risk",
+    priority: "Critical",
+    documentId: "doc_msa_exhibit_a",
+    page: 1,
+    quote:
+      "The customer agrees that this agreement resolves all issues and releases all claims known or unknown through the date of execution.",
+    meaning:
+      "Signing as-is would waive every unremedied breach above — including the two admitted in Exhibit B. Do not sign before they are cured or carved out.",
+    strategicUse: "Hold this as the line you do not cross. Carve out the open SLA breaches before any release.",
+    question:
+      "Before any release, can we carve out the open reporting and support-tier breaches in writing?",
+    likelyDefense: "It's standard boilerplate.",
+    counter: "Standard or not, it extinguishes live claims. Those get carved out before signature.",
+    tags: ["Release", "Risk", "Do not sign", "Exhibit A"],
+    confidence: 90,
+    packetReady: false,
+    verificationStatus: "cited",
+    keepHold: "HOLD",
+    live: {
+      issue: "Renewal would release all existing claims",
+      say: "I'm not releasing the open breaches. Carve them out, then we can talk renewal.",
+      pull: "Exhibit A, p.1",
+      next: "Get a written carve-out before any signature",
+    },
+  },
+  {
+    id: "ev_records_request",
+    title: "Records request already on the table (uptime + incidents)",
+    category: "Missing records",
+    priority: "Medium",
+    documentId: "doc_status_notice_exhibit_b",
+    page: 1,
+    quote:
+      "Acme Corp requested uptime logs and incident records to verify whether the deliverables required by the Master Services Agreement were completed.",
+    meaning:
+      "Acme already asked for the proof and it hasn't been produced. Non-production is itself a talking point.",
+    strategicUse: "Tie to the missing-records tracker; demand production before the renewal review.",
+    question:
+      "We requested uptime logs and incident records on the Dec 4 notice — when will those be produced?",
+    likelyDefense: "We'll get to it.",
+    counter: "The records verify whether the MSA deliverables were met. Renewal review can't proceed without them.",
+    tags: ["Records", "Uptime", "Exhibit B"],
+    confidence: 80,
+    packetReady: false,
+    verificationStatus: "cited",
+  },
+];
 
-const seedIssues: Issue[] = [];
+const seedIssues: Issue[] = [
+  {
+    id: "issue_missed_deliverables",
+    title: "Vendor missed contracted SLA deliverables",
+    description:
+      "Two written admissions in the Dec 4 notice: contracted reporting not delivered, and the agreed support tier not provided.",
+    evidenceIds: ["ev_nondelivery_admission", "ev_support_tier_breach"],
+    status: "Open",
+    meetingPriority: 1,
+  },
+  {
+    id: "issue_release_carveout",
+    title: "Carve out open breaches before any release / renewal",
+    description:
+      "The renewal language releases all claims through execution. Open breaches must be carved out before signature.",
+    evidenceIds: ["ev_release_of_claims"],
+    status: "Needs document",
+    meetingPriority: 2,
+  },
+  {
+    id: "issue_vague_sla",
+    title: "Replace unmeasurable SLA language with a real metric",
+    description:
+      "'As tolerated' / 'a later date' can't be enforced. Need a concrete metric and a fixed review date.",
+    evidenceIds: ["ev_vague_sla_escape"],
+    status: "Open",
+    meetingPriority: 3,
+  },
+];
 
-const seedTimeline: TimelineEntry[] = [];
+const seedTimeline: TimelineEntry[] = [
+  {
+    id: "tl_msa_executed",
+    date: "2025-01-15",
+    event: "MSA executed with vague service-level language and a broad release of claims.",
+    documentId: "doc_msa_exhibit_a",
+    page: 1,
+    quote: "Service levels will increase as tolerated and review will occur at a later date.",
+    issue: "issue_vague_sla",
+  },
+  {
+    id: "tl_status_notice",
+    date: "2025-12-04",
+    event: "Vendor admits non-delivery of contracted reporting and that the agreed support tier was not provided.",
+    documentId: "doc_status_notice_exhibit_b",
+    page: 1,
+    quote: "the team has not been able to deliver the contracted reporting work this quarter.",
+    issue: "issue_missed_deliverables",
+  },
+  {
+    id: "tl_records_request",
+    date: "2025-12-04",
+    event: "Acme requests uptime logs and incident records to verify MSA deliverables.",
+    documentId: "doc_status_notice_exhibit_b",
+    page: 1,
+    quote:
+      "Acme Corp requested uptime logs and incident records to verify whether the deliverables required by the Master Services Agreement were completed.",
+    issue: "issue_missed_deliverables",
+  },
+];
 
-const seedMissingRecords: MissingRecord[] = [];
+const seedMissingRecords: MissingRecord[] = [
+  {
+    id: "mr_uptime_logs",
+    requested: "Q4 uptime logs and incident records",
+    dateRequested: "2025-12-04",
+    responsibleParty: "Northwind Vendor Co.",
+    status: "Missing",
+    relatedIssue: "issue_missed_deliverables",
+    whyItMatters: "These records verify whether the MSA deliverables were actually completed.",
+    followUp: "Demand production in writing before the renewal review meeting.",
+  },
+  {
+    id: "mr_sla_schedule",
+    requested: "Signed SLA metric / threshold schedule",
+    dateRequested: "2025-12-10",
+    responsibleParty: "Northwind Vendor Co.",
+    status: "Partial",
+    relatedIssue: "issue_vague_sla",
+    whyItMatters: "Without a concrete metric, 'service levels as tolerated' is unenforceable.",
+    followUp: "Request the governing SLA schedule referenced by the MSA.",
+  },
+];
 
 const seedCaseProfile: CaseProfile = {
-  name: "Demo Case",
-  role: "",
-  objective: "",
-  meetingDate: new Date().toISOString().slice(0, 10),
+  name: "Acme Corp — Vendor SLA Review",
+  role: "Customer / contract reviewer",
+  objective:
+    "Hold the vendor to the MSA: document the admitted breaches, force production of the uptime records, and carve out the open claims before any renewal.",
+  meetingDate: "2026-06-22",
+};
+
+const seedBattleCard: BattleCard = {
+  openingStatement:
+    "Thanks for making time. I want to keep this concrete and on the record.\n\nYour December 4 status notice puts two things in writing: the contracted reporting work wasn't delivered this quarter, and the agreed support tier wasn't provided. I'm not here to relitigate the migration — I'm here to agree a remedy, a cure date, and the SLA credits those breaches trigger.\n\nBefore we discuss any renewal, I'll need the uptime logs and incident records we requested, and the open breaches carved out of the release language. Once those are settled, we can talk about going forward.",
+  shortOpening:
+    "Your own Dec 4 notice admits the reporting wasn't delivered and the support tier wasn't provided. I need a remedy, a cure date, the SLA credits, and the uptime records — and the open breaches carved out before any renewal.",
+  agenda: [
+    "Confirm the two admitted breaches (reporting + support tier)",
+    "Remedy, cure date, and SLA credit for each",
+    "Production of the requested uptime logs and incident records",
+    "Carve-out of open breaches before any release / renewal",
+    "A real SLA metric to replace 'as tolerated / a later date'",
+  ],
+  goals: [
+    "Get a cure date and remedy on the record",
+    "Get the uptime records produced",
+    "Protect the open claims from the release language",
+  ],
+  questions: [
+    "Your Dec 4 notice says the contracted reporting wasn't delivered — what is the remedy under the MSA?",
+    "The notice also says the agreed support tier wasn't provided. Was an SLA credit issued, and under which clause?",
+    "We requested uptime logs and incident records on Dec 4 — when will those be produced?",
+    "Exhibit A says review 'at a later date.' What specific metric and what fixed date govern that review?",
+    "Before any release of claims, will you carve out the open reporting and support-tier breaches in writing?",
+  ],
+  ifThen: [
+    {
+      if: "We were focused on a separate platform migration.",
+      then: "The MSA doesn't condition the reporting deliverable on your other projects. A competing priority isn't a contractual excuse.",
+    },
+    {
+      if: "The maintenance window was limited.",
+      then: "A limited window doesn't waive the contracted support tier — it triggers the SLA credit.",
+    },
+    {
+      if: "That release language is standard boilerplate.",
+      then: "Standard or not, it extinguishes live claims. The open breaches get carved out before any signature.",
+    },
+    {
+      if: "Service levels increase 'as tolerated.'",
+      then: "'As tolerated' isn't measurable. Point me to the binding metric and the data showing it was met.",
+    },
+    {
+      if: "We'll get to the records.",
+      then: "The records verify whether the MSA deliverables were met. The renewal review can't proceed without them.",
+    },
+  ],
+  pwnPrompts: [
+    "the team has not been able to deliver the contracted reporting work this quarter. (Exhibit B, p.1)",
+    "the agreed support tier could not be provided at this time. (Exhibit B, p.1)",
+    "Service levels will increase as tolerated and review will occur at a later date. (Exhibit A, p.1)",
+    "...releases all claims known or unknown through the date of execution. (Exhibit A, p.1)",
+  ],
+  holdList: [
+    "Do NOT sign any renewal or release until the open breaches are carved out in writing.",
+  ],
+  copyPhrases: [
+    "I need a cure date and the SLA credit on the record today.",
+    "Carve out the open breaches before we discuss renewal.",
+    "Produce the uptime logs and incident records we requested on Dec 4.",
+  ],
 };
 
 const meetingTypes = [
@@ -1132,7 +1444,7 @@ function App() {
   const [evidence, setEvidence] = useLocalState("sourcedeck.evidence", seedEvidence);
   const [battleCard, setBattleCard] = useLocalState<BattleCard | null>(
     "sourcedeck.battleCard",
-    null,
+    seedBattleCard,
   );
   const [issues, setIssues] = useLocalState("sourcedeck.issues", seedIssues);
   const [timeline, setTimeline] = useLocalState("sourcedeck.timeline", seedTimeline);
@@ -4929,7 +5241,7 @@ function App() {
                       <ListChecks size={20} />
                       <div>
                         <h2>Meeting order</h2>
-                        <p>Keep today in this sequence - don't get pulled into REACH/billing.</p>
+                        <p>Keep today in this sequence - don't get pulled off onto side issues.</p>
                       </div>
                     </div>
                     <ol className="battle-questions">

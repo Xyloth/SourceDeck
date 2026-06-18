@@ -8,6 +8,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:demo": "vite --mode demo",
     "build": "tsc -b && vite build",
     "app": "electron electron/main.cjs",
     "app:build": "tsc -b && vite build && electron electron/main.cjs",
