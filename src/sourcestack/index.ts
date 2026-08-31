@@ -31,3 +31,4 @@ export * from "./trustRegistry";
 export * from "./types";
 export * from "./verification";
 export * from "./workbench";
+export * from "./workspacePrivacy";

@@ -52,6 +52,10 @@ verification gate allows it.
 - **Source bytes are encrypted at rest.** Original files and rendered page images are AES-GCM
   encrypted (PBKDF2-SHA256) before they touch IndexedDB, gated on a workspace passphrase. With no
   passphrase the app refuses to persist plaintext bytes at all. One key derivation per import.
+- **Extracted source text is session-only.** Verbatim extracted text, per-page text, the durable text
+  artifact, and case-store artifact payloads are removed before browser `localStorage` serialization.
+  They remain usable in memory during the active session and can be retained through an explicit
+  encrypted workspace export. Reloading requires re-import or encrypted restore.
 - **KDF policy.** Production derives at 600k PBKDF2 iterations; decrypt and encrypt reject anything
   below 100k (downgrade) or above 10M (decrypt-time DoS).
 - **Signing-key custody.** Private signing keys are passphrase-wrapped (AES-GCM); custody
@@ -68,6 +72,10 @@ verification gate allows it.
 - **Model output is gated.** Candidate evidence from a model is rejected unless it structurally
   resolves to a real source span; nothing a model emits writes directly to the graph. Privacy mode
   is a hard ceiling on which model lanes may run.
+- **Loopback sidecars reject arbitrary web origins.** Speech and CLI-intelligence operations bind to
+  loopback, use an explicit origin allowlist instead of wildcard CORS, and require a per-process
+  bearer capability obtained by the trusted SourceDeck origin. This prevents an unrelated browser
+  page from spending model resources or reading sidecar output.
 
 ## 5. Honest limits (what is NOT yet guaranteed)
 
@@ -81,6 +89,13 @@ verification gate allows it.
 - **No real model runtime or OCR engine.** The model router/gates and OCR pipeline are typed,
   gated scaffolding; no live frontier model or OCR worker is wired in yet.
 - **Local-first only.** No collaboration, zero-knowledge sync, or cross-device chain-of-custody.
+- **Derived workspace state remains a local prototype.** Evidence-card quotes, meeting notes, issue
+  labels, and other user-created or derived workspace fields still use plaintext browser
+  `localStorage`. SourceDeck therefore requires a trusted local browser profile; encrypted at-rest
+  persistence for the entire workspace is not yet implemented.
+- **Sidecar capabilities are not an OS sandbox.** Origin checks and per-process capabilities defend
+  the browser boundary; another process running as the same local user remains inside the local
+  trust boundary.
 - **Not legal advice.** SourceDeck organizes a user's own records; it does not render legal
   conclusions. The legal-boundary language should be reviewed by counsel before commercialization.
 

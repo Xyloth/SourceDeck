@@ -1,11 +1,13 @@
 import http from "node:http";
 import { spawn } from "node:child_process";
+import { createSidecarSecurity } from "./sidecar-security.mjs";
 
 const host = process.env.SOURCEDECK_SMART_SEARCH_HOST ?? "127.0.0.1";
 const port = Number(process.env.SOURCEDECK_SMART_SEARCH_PORT ?? 4318);
 const command = process.env.SOURCEDECK_SMART_SEARCH_COMMAND ?? "codex";
 const timeoutMs = Number(process.env.SOURCEDECK_SMART_SEARCH_TIMEOUT_MS ?? 45000);
 const maxBodyBytes = 2_000_000;
+const sidecarSecurity = createSidecarSecurity();
 
 function parseCommandArgs(value) {
   const args = [];
@@ -38,16 +40,6 @@ function parseCommandArgs(value) {
 }
 
 const args = parseCommandArgs(process.env.SOURCEDECK_SMART_SEARCH_ARGS ?? "");
-
-function writeJson(response, status, payload) {
-  response.writeHead(status, {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS, GET",
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Content-Type": "application/json",
-  });
-  response.end(JSON.stringify(payload, null, 2));
-}
 
 function readBody(request) {
   return new Promise((resolve, reject) => {
@@ -193,12 +185,13 @@ function runCommand(prompt) {
 }
 
 const server = http.createServer(async (request, response) => {
-  if (request.method === "OPTIONS") {
-    writeJson(response, 200, { ok: true });
+  if (sidecarSecurity.handlePreflight(request, response)) return;
+  if (request.method === "GET" && request.url === "/session") {
+    sidecarSecurity.issueSession(request, response);
     return;
   }
   if (request.method === "GET" && request.url === "/health") {
-    writeJson(response, 200, {
+    sidecarSecurity.writeJson(request, response, 200, {
       ok: true,
       command,
       args,
@@ -207,9 +200,10 @@ const server = http.createServer(async (request, response) => {
     return;
   }
   if (request.method !== "POST" || request.url !== "/smart-search") {
-    writeJson(response, 404, { ok: false, error: "not found" });
+    sidecarSecurity.writeJson(request, response, 404, { ok: false, error: "not found" });
     return;
   }
+  if (!sidecarSecurity.authorizeOperation(request, response)) return;
   try {
     const body = await readBody(request);
     const payload = JSON.parse(body);
@@ -217,9 +211,14 @@ const server = http.createServer(async (request, response) => {
     const prompt = buildPrompt(boundedRequest);
     const outputText = await runCommand(prompt);
     const modelOutput = extractJsonObject(outputText);
-    writeJson(response, 200, validateResponse(modelOutput, boundedRequest));
+    sidecarSecurity.writeJson(
+      request,
+      response,
+      200,
+      validateResponse(modelOutput, boundedRequest),
+    );
   } catch (error) {
-    writeJson(response, 503, {
+    sidecarSecurity.writeJson(request, response, 503, {
       ok: false,
       error: error instanceof Error ? error.message : "smart-search sidecar failed",
       command,
@@ -231,5 +230,6 @@ const server = http.createServer(async (request, response) => {
 server.listen(port, host, () => {
   console.log(`SourceDeck smart-search sidecar listening on http://${host}:${port}`);
   console.log(`Command: ${command} ${args.join(" ")}`.trim());
+  console.log("Browser operations require a trusted Origin and a per-process sidecar session.");
   console.log("Set SOURCEDECK_SMART_SEARCH_COMMAND and SOURCEDECK_SMART_SEARCH_ARGS to change CLI custody.");
 });

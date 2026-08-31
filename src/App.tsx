@@ -57,7 +57,6 @@ import {
   promotionCertificateToRecordedEvent,
   proofSnapshotHash,
   parseSearchCommand,
-  redactSourceVaultManifestPayloads,
   buildSignoffReviewQueue,
   splitEvidenceCard,
   mergeEvidenceCards,
@@ -79,8 +78,9 @@ import {
   routeModelJob,
   signPacketManifestWithStoredKey,
   SOURCE_ARTIFACT_CASE_STORE_MEDIA_TYPE,
-  SOURCE_VAULT_REDACTED_PAYLOAD_REASON,
   sourceVaultManifestHasPayloads,
+  sanitizeCaseStoreForLocalStorage,
+  sanitizeWorkspaceDocumentsForLocalStorage,
   sourceVaultPayloadBytes,
   unwrapPacketSigningKey,
   verifyEncryptedPacketSigningKey,
@@ -176,22 +176,6 @@ type SourceDocument = {
   sourceVaultVerified?: boolean;
   sourceVaultFailure?: string;
 };
-
-function sanitizeSourceDocumentForLocalStorage(document: SourceDocument): SourceDocument {
-  if (!document.sourceVaultManifest || !sourceVaultManifestHasPayloads(document.sourceVaultManifest)) {
-    return document;
-  }
-  return {
-    ...document,
-    sourceVaultManifest: redactSourceVaultManifestPayloads(document.sourceVaultManifest),
-    sourceVaultVerified: false,
-    sourceVaultFailure: document.sourceVaultFailure ?? SOURCE_VAULT_REDACTED_PAYLOAD_REASON,
-  };
-}
-
-function sanitizeSourceDocumentsForLocalStorage(documents: SourceDocument[]) {
-  return documents.map(sanitizeSourceDocumentForLocalStorage);
-}
 
 type EvidenceCard = {
   id: string;
@@ -596,6 +580,15 @@ const seedDocuments: SourceDocument[] = [
     detectedEntities: ["Acme Corp", "Master Services Agreement"],
   },
 ];
+
+// Demo source text is compiled from this fictional seed, never recovered from localStorage. This
+// keeps the public worked example intact while proving that persisted document records are textless.
+seedDocuments.forEach((document) => {
+  seedSourceTextByDocumentId[document.id] = {
+    extractedText: document.extractedText,
+    pageTexts: document.pageTexts,
+  };
+});
 
 const seedEvidence: EvidenceCard[] = [
   {
@@ -1118,6 +1111,42 @@ function useLocalState<T>(
   return [value, update] as const;
 }
 
+const sidecarSessionTokens = new Map<string, string>();
+
+async function fetchSidecarSessionToken(baseUrl: string) {
+  const response = await fetch(`${baseUrl}/session`, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`sidecar session returned ${response.status}`);
+  }
+  const payload = (await response.json()) as {
+    format?: string;
+    token?: string;
+  };
+  if (payload.format !== "sourcedeck.sidecar-session.v1" || !payload.token) {
+    throw new Error("sidecar did not issue a valid session capability");
+  }
+  sidecarSessionTokens.set(baseUrl, payload.token);
+  return payload.token;
+}
+
+async function fetchAuthorizedSidecar(
+  baseUrl: string,
+  path: string,
+  init: RequestInit,
+  allowSessionRefresh = true,
+) {
+  const token =
+    sidecarSessionTokens.get(baseUrl) ?? (await fetchSidecarSessionToken(baseUrl));
+  const headers = new Headers(init.headers);
+  headers.set("X-SourceDeck-Token", token);
+  const response = await fetch(`${baseUrl}${path}`, { ...init, headers });
+  if (response.status === 401 && allowSessionRefresh) {
+    sidecarSessionTokens.delete(baseUrl);
+    return fetchAuthorizedSidecar(baseUrl, path, init, false);
+  }
+  return response;
+}
+
 function compactDate(value: string) {
   if (!value) return "Undated";
   return new Intl.DateTimeFormat(undefined, {
@@ -1434,8 +1463,8 @@ function toArrayBuffer(bytes: Uint8Array) {
 function App() {
   const [documents, setDocuments] = useLocalState("sourcedeck.documents", seedDocuments, {
     deserialize: (stored) =>
-      sanitizeSourceDocumentsForLocalStorage(stored as SourceDocument[]),
-    serialize: sanitizeSourceDocumentsForLocalStorage,
+      sanitizeWorkspaceDocumentsForLocalStorage(stored as SourceDocument[]),
+    serialize: sanitizeWorkspaceDocumentsForLocalStorage,
   });
   const [caseProfile, setCaseProfile] = useLocalState(
     "sourcedeck.caseProfile",
@@ -1459,6 +1488,11 @@ function App() {
   const [trustStore, setTrustStore] = useLocalState<ContentAddressedCaseStore | null>(
     "sourcedeck.trustStore",
     null,
+    {
+      deserialize: (stored) =>
+        sanitizeCaseStoreForLocalStorage(stored as ContentAddressedCaseStore | null),
+      serialize: sanitizeCaseStoreForLocalStorage,
+    },
   );
   // Tracks which bundled deck version has been applied, so a newer public/casedeck.json auto-refreshes.
   const [deckVersion, setDeckVersion] = useLocalState<string>("sourcedeck.deckVersion", "");
@@ -3007,7 +3041,7 @@ function App() {
   }
 
   async function transcribeWithSidecar(audio: Blob) {
-    const response = await fetch("http://127.0.0.1:4317/transcribe", {
+    const response = await fetchAuthorizedSidecar("http://127.0.0.1:4317", "/transcribe", {
       method: "POST",
       headers: {
         "Content-Type": audio.type || "audio/webm",
@@ -3107,7 +3141,7 @@ function App() {
     );
     setIntelligenceStatus("Calling local CLI intelligence sidecar...");
     try {
-      const response = await fetch("http://127.0.0.1:4318/smart-search", {
+      const response = await fetchAuthorizedSidecar("http://127.0.0.1:4318", "/smart-search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(request),
@@ -3807,19 +3841,21 @@ function App() {
   }
 
   function createWorkspaceSnapshot(
-    options: { redactSourceVaultPayloads?: boolean } = {},
+    options: { redactSensitiveSourceMaterial?: boolean } = {},
   ): WorkspaceSnapshot {
     return {
       caseProfile,
-      documents: options.redactSourceVaultPayloads
-        ? sanitizeSourceDocumentsForLocalStorage(documents)
+      documents: options.redactSensitiveSourceMaterial
+        ? sanitizeWorkspaceDocumentsForLocalStorage(documents)
         : documents,
       evidence,
       issues,
       timeline,
       missingRecords,
       meetingNotes,
-      trustStore,
+      trustStore: options.redactSensitiveSourceMaterial
+        ? sanitizeCaseStoreForLocalStorage(trustStore)
+        : trustStore,
       trustRegistry,
       battleCard: battleCard ?? undefined,
     };
@@ -3827,6 +3863,9 @@ function App() {
 
   function exportPlainWorkspace() {
     const artifactCount = documents.filter((document) => document.sourceArtifact).length;
+    const caseArtifactCount = Object.values(trustStore?.artifacts ?? {}).filter(
+      (artifact) => artifact.payload.data,
+    ).length;
     const vaultCount = documents.filter((document) => document.sourceVaultManifest).length;
     const vaultPageImageCount = documents.reduce(
       (sum, document) => sum + (document.sourceVaultManifest?.pageImages.length ?? 0),
@@ -3834,17 +3873,19 @@ function App() {
     );
     downloadText(
       "sourcedeck-data.json",
-      JSON.stringify(createWorkspaceSnapshot({ redactSourceVaultPayloads: true }), null, 2),
+      JSON.stringify(createWorkspaceSnapshot({ redactSensitiveSourceMaterial: true }), null, 2),
       "application/json",
     );
     setPrivacyStatus(
-      `Plain workspace JSON exported with source text${
-        artifactCount ? ` and ${artifactCount} artifact payload${artifactCount === 1 ? "" : "s"}` : ""
+      `Plain workspace JSON exported without extracted source text${
+        artifactCount || caseArtifactCount
+          ? `; ${artifactCount + caseArtifactCount} plaintext artifact payload${artifactCount + caseArtifactCount === 1 ? " was" : "s were"} redacted`
+          : ""
       }${
         vaultCount
           ? ` plus ${vaultCount} source-vault custody reference${vaultCount === 1 ? "" : "s"} (${vaultPageImageCount} rendered page image reference${vaultPageImageCount === 1 ? "" : "s"}; payloads redacted)`
           : ""
-      }. Use encrypted export for payload-bearing private records.`,
+      }. Use encrypted export to retain private source material.`,
     );
     void recordTrustEvent({
       type: "security_finding",
@@ -3853,9 +3894,11 @@ function App() {
       payload: {
         plainWorkspaceExport: true,
         artifactCount,
+        caseArtifactCount,
         vaultCount,
         vaultPageImageCount,
-        includesSourceText: true,
+        includesSourceText: false,
+        sourceArtifactsRedacted: artifactCount + caseArtifactCount > 0,
         includesSourceVaultPayloads: false,
         sourceVaultPayloadsRedacted: vaultCount > 0,
       },

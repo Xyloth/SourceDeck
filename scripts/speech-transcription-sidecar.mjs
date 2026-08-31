@@ -1,10 +1,12 @@
 import { createServer } from "node:http";
+import { createSidecarSecurity } from "./sidecar-security.mjs";
 
 const host = process.env.SOURCEDECK_SPEECH_HOST ?? "127.0.0.1";
 const port = Number(process.env.SOURCEDECK_SPEECH_PORT ?? 4317);
 const model = process.env.OPENAI_TRANSCRIBE_MODEL ?? "gpt-4o-transcribe";
 const apiKey = process.env.OPENAI_API_KEY;
 const maxBodyBytes = Number(process.env.SOURCEDECK_SPEECH_MAX_BYTES ?? 25_000_000);
+const sidecarSecurity = createSidecarSecurity();
 
 function readBody(request) {
   return new Promise((resolve, reject) => {
@@ -24,23 +26,14 @@ function readBody(request) {
   });
 }
 
-function writeJson(response, status, payload) {
-  response.writeHead(status, {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS, GET",
-    "Access-Control-Allow-Headers": "Content-Type, X-SourceDeck-File",
-    "Content-Type": "application/json",
-  });
-  response.end(JSON.stringify(payload));
-}
-
 const server = createServer(async (request, response) => {
-  if (request.method === "OPTIONS") {
-    writeJson(response, 204, {});
+  if (sidecarSecurity.handlePreflight(request, response)) return;
+  if (request.method === "GET" && request.url === "/session") {
+    sidecarSecurity.issueSession(request, response);
     return;
   }
   if (request.method === "GET" && request.url === "/health") {
-    writeJson(response, 200, {
+    sidecarSecurity.writeJson(request, response, 200, {
       ok: true,
       format: "sourcedeck.speech-sidecar.v1",
       model,
@@ -50,11 +43,12 @@ const server = createServer(async (request, response) => {
     return;
   }
   if (request.url !== "/transcribe" || request.method !== "POST") {
-    writeJson(response, 404, { error: "not_found" });
+    sidecarSecurity.writeJson(request, response, 404, { error: "not_found" });
     return;
   }
+  if (!sidecarSecurity.authorizeOperation(request, response)) return;
   if (!apiKey) {
-    writeJson(response, 503, {
+    sidecarSecurity.writeJson(request, response, 503, {
       error: "missing_openai_api_key",
       detail: "Set OPENAI_API_KEY before running npm run speech:sidecar.",
     });
@@ -63,7 +57,7 @@ const server = createServer(async (request, response) => {
   try {
     const body = await readBody(request);
     if (!body.byteLength) {
-      writeJson(response, 400, { error: "empty_audio" });
+      sidecarSecurity.writeJson(request, response, 400, { error: "empty_audio" });
       return;
     }
     const contentType = request.headers["content-type"] || "audio/webm";
@@ -81,16 +75,16 @@ const server = createServer(async (request, response) => {
     });
     const text = await upstream.text();
     if (!upstream.ok) {
-      writeJson(response, upstream.status, {
+      sidecarSecurity.writeJson(request, response, upstream.status, {
         error: "transcription_failed",
         detail: text,
       });
       return;
     }
     const payload = JSON.parse(text);
-    writeJson(response, 200, { text: payload.text ?? "" });
+    sidecarSecurity.writeJson(request, response, 200, { text: payload.text ?? "" });
   } catch (error) {
-    writeJson(response, 500, {
+    sidecarSecurity.writeJson(request, response, 500, {
       error: "speech_sidecar_error",
       detail: error instanceof Error ? error.message : "unknown error",
     });
@@ -101,4 +95,5 @@ server.listen(port, host, () => {
   console.log(
     `SourceDeck speech sidecar listening on http://${host}:${port}/transcribe using ${model}`,
   );
+  console.log("Browser operations require a trusted Origin and a per-process sidecar session.");
 });
