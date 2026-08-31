@@ -22,7 +22,7 @@
     "speech:sidecar": "node scripts/speech-transcription-sidecar.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run && node --test scripts/*.node-test.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

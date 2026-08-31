@@ -50,6 +50,8 @@ pull up the source-backed quote or question while the conversation is happening.
   packets, and encrypted workspace JSON.
 - Local-first privacy posture: sensitive records are processed locally and are
   not committed to this repository.
+- Verbatim extracted text is session-only and removed before browser
+  `localStorage` serialization; encrypted workspace export is the durable path.
 
 ## Case Folder Importer
 
@@ -87,8 +89,22 @@ Image-only PDFs, chart-only DOCX files, and scanned records are marked as
 - Mammoth for DOCX extraction
 - `word-extractor` for local legacy DOC preloading
 - Browser localStorage for the current workspace prototype
+- Session-only extracted source text plus encrypted source-byte custody in IndexedDB
 - Web Crypto PBKDF2/AES-GCM for encrypted workspace export/import
 - Vercel deployment
+
+## Local Sidecar Security
+
+The optional speech and CLI-intelligence sidecars bind to `127.0.0.1`. Browser
+operations accept only the shipped SourceDeck origin or loopback development and
+Electron origins, then require a per-process bearer capability. There is no
+wildcard CORS access. Additional exact origins can be configured through
+`SOURCEDECK_ALLOWED_ORIGINS`; see `.env.example`.
+
+These controls prevent an unrelated web page from invoking a local model command
+or reading its output. They are a browser boundary, not an operating-system
+sandbox: processes running as the same local user remain in the local trust
+boundary.
 
 ## Run Locally
 
@@ -128,6 +144,12 @@ The sample data in the demo is fictional. Do not commit real contract,
 medical, HR, legal, financial, or other private records to a public
 repository. SourceDeck's product direction is local-first because the target
 documents are often sensitive.
+
+The current browser prototype still persists derived workspace fields such as
+evidence-card quotes and meeting notes in plaintext `localStorage`. Use a trusted
+browser profile, reset the workspace after sensitive sessions, and use encrypted
+workspace export when durable custody is required. The full boundary is stated
+in [TRUST_MODEL.md](TRUST_MODEL.md).
 
 ## Product Rule
 
