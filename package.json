@@ -22,7 +22,8 @@
     "speech:sidecar": "node scripts/speech-transcription-sidecar.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run && node --test scripts/*.node-test.mjs"
+    "test": "vitest run && node --test scripts/*.node-test.mjs",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.62.1",
     "@types/node": "^24.12.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

@@ -1,6 +1,6 @@
 {
   "format": "sourcedeck.sourcestack-bundle.v1",
-  "generatedAt": "2026-06-17T00:13:10.793Z",
+  "generatedAt": "2026-08-31T14:25:01.015Z",
   "caseName": "SourceStack custody gauntlet fixture",
   "graph": {
     "documents": {
@@ -370,7 +370,7 @@
       "format": "sourcedeck.packet-manifest.v1",
       "packetId": "bundle-packet:sha256:515aa201f31ae352f459815e18199182469c635c581a58c5ca00f1dfb4ea25f1",
       "packetType": "forensic_bundle",
-      "packetHash": "sha256:fe09f349df1a8052653aa3a449389b5fa9d8f3aa461eb30c0592a1599837de5e",
+      "packetHash": "sha256:5520d0a72f3ccf197d4349b8b2bc6dece99988b84c170d1730170f2674d48faf",
       "sourceDocumentHashes": [
         {
           "documentId": "doc_a",
@@ -399,9 +399,9 @@
         }
       ],
       "redactionOperations": [],
-      "exportTimestamp": "2026-06-17T00:13:10.793Z",
+      "exportTimestamp": "2026-08-31T14:25:01.015Z",
       "issuerIdentity": "SourceStack custody gauntlet fixture",
-      "manifestHash": "sha256:39744c95e72eba7503ea683942a0567b26d32fc3119f6d75d0c2c683e118a818"
+      "manifestHash": "sha256:89168367795573e6043990bdcdfc2d28e529cab608c9a2169a29d2cab9fa5995"
     }
   ],
   "caseStore": {
@@ -472,7 +472,7 @@
   "packetManifestVerifications": [
     {
       "ok": true,
-      "manifestHash": "sha256:39744c95e72eba7503ea683942a0567b26d32fc3119f6d75d0c2c683e118a818"
+      "manifestHash": "sha256:89168367795573e6043990bdcdfc2d28e529cab608c9a2169a29d2cab9fa5995"
     }
   ],
   "packetManifestSignatureVerifications": [
@@ -622,5 +622,5 @@
   ],
   "bitemporalContradictions": [],
   "graphHash": "sha256:a8b071810463ca882b80801a2bc36b710ed9e6850144e6f4d0f45f8aaacd8644",
-  "bundleHash": "sha256:8b51ca6527d141cbf076ce3072fdbabd53372d09b21845515fba756977167c38"
+  "bundleHash": "sha256:4fadaf6bb3c638217ea2c19b87f1873e0917bca512546e303de251156c651b57"
 }

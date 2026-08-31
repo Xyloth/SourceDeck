@@ -1,159 +1,197 @@
 # SourceDeck
 
 [![CI](https://github.com/Xyloth/SourceDeck/actions/workflows/ci.yml/badge.svg)](https://github.com/Xyloth/SourceDeck/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/live-sourcedeck.vercel.app-f0b45d)](https://sourcedeck.vercel.app)
+[![Trust model](https://img.shields.io/badge/trust-explicit-73c7cb)](TRUST_MODEL.md)
 
-SourceDeck is a local-first evidence command center for high-stakes meetings.
-It turns PDFs, Word documents, notes, and record folders into searchable
-evidence cards with exact quotes, source references, issue maps, meeting
-questions, missing-record trackers, and exportable packets.
+**A local-first evidence command center for high-stakes meetings.** SourceDeck turns
+PDFs, Word documents, notes, and record folders into source-linked evidence cards,
+issue maps, live retrieval, and exportable packets—while deterministic gates keep
+unsupported claims out of the strongest path.
 
-Live demo: [https://sourcedeck.vercel.app](https://sourcedeck.vercel.app)
+[![SourceDeck evidence workspace](docs/screenshots/live-evidence.png)](https://sourcedeck.vercel.app)
 
-> The right quote, the right page, the right moment.
+**[Open the live worked example](https://sourcedeck.vercel.app)** ·
+**[Read the explicit trust model](TRUST_MODEL.md)** ·
+**[Inspect the 63-case adversarial gauntlet](reports/source-gauntlet-report.md)**
 
-## Why This Exists
+## What This Repository Demonstrates
 
-Important meetings often turn on records: vendor and SLA disputes, legal prep, HR
-disputes, medical appeals, insurance reviews, compliance audits, and
-investigations. People may know the evidence exists, but still lose leverage
-because they cannot find the exact quote, page, or document fast enough.
+- **Document engineering:** real browser-side PDF.js and Mammoth extraction,
+  page-aware source records, rendered PDF page geometry, and encrypted source-byte
+  custody.
+- **Deterministic trust boundaries:** exact-quote resolution, content addressing,
+  append-only hash chains, signed packet manifests, redaction hard walls, and
+  fail-closed packet assembly.
+- **Bounded AI architecture:** source text is treated as hostile data, model output
+  can propose candidates but cannot create verified facts, and privacy mode is a
+  hard routing ceiling.
+- **Adversarial validation:** 90 unit/security tests, a 63-case evidence gauntlet,
+  and a production-browser critical-path test.
+- **Secure local integration:** optional speech and CLI-intelligence sidecars bind
+  to loopback, reject arbitrary browser origins, and require per-process bearer
+  capabilities.
+- **Shipping discipline:** locked dependencies, zero current npm advisories,
+  automated lint/test/build/browser/audit CI, a live Vercel deployment, and an
+  explicit list of what the system does **not** yet guarantee.
 
-SourceDeck is built around one principle:
+## Product Walkthrough
 
-> Never say "I will find it later."
+SourceDeck is designed for the moment when a meeting moves faster than a folder
+tree. The worked example opens with a meeting battle card, lets the user retrieve
+the precise supporting record, and blocks packet export when source proof is
+insufficient.
 
-The user can preload records, organize the issues, enter live meeting mode, and
-pull up the source-backed quote or question while the conversation is happening.
+![SourceDeck battle card and meeting posture](docs/screenshots/live-battle-card.png)
+
+The main workflow supports:
+
+1. Import records locally and index text, pages, metadata, and custody hashes.
+2. Search exact and fuzzy retrieval lanes without merging their confidence levels.
+3. Turn findings into evidence cards with quote, source, page, meaning, question,
+   likely defense, and counter-response.
+4. Review source-chain diagnostics and human verification state.
+5. Assemble Markdown, HTML, CSV, encrypted workspace, or signed forensic outputs;
+   packet hard walls fail the complete export when selected claims are unresolved.
+6. Enter live meeting mode for rapid quote, question, refusal, commitment, and
+   action-item capture.
+
+## System Design
+
+```mermaid
+flowchart LR
+    A[Local PDF / DOCX / records] --> B[Browser extraction + page geometry]
+    B --> C[Content-addressed artifact + encrypted source vault]
+    C --> D[Source graph: document → page → span → evidence]
+    D --> E{Deterministic verification gate}
+    F[Bounded model / OCR candidate lanes] --> E
+    E -->|proof resolves| G[Human signoff + packet factory]
+    E -->|proof fails| H[Blocked with exact diagnostic]
+    G --> I[Signed manifest / encrypted workspace / forensic bundle]
+```
+
+The kernel owns factual truth. Intelligence lanes may rank, extract, or suggest,
+but no model result becomes verified evidence until its quote and source chain
+resolve deterministically.
+
+## Verifiable Engineering Evidence
+
+| Control | Current proof |
+| --- | --- |
+| Unit and contract behavior | `npm test`: 87 Vitest cases + 3 Node sidecar-security cases |
+| Adversarial evidence behavior | [`reports/source-gauntlet-report.md`](reports/source-gauntlet-report.md): 63/63 cases pass |
+| Browser critical path | `npm run test:e2e`: Chromium navigation, record search, and textless document persistence |
+| Production bundle | `npm run build`: TypeScript project build + Vite production bundle |
+| Dependency posture | `npm audit`: 0 current vulnerabilities |
+| Continuous verification | [GitHub Actions](https://github.com/Xyloth/SourceDeck/actions/workflows/ci.yml) runs lint, tests, build, Chromium smoke, and production audit |
+| Deployment | [sourcedeck.vercel.app](https://sourcedeck.vercel.app) |
+
+Run the same evidence locally:
+
+```powershell
+npm ci
+npm run lint
+npm test
+npm run build
+npx playwright install chromium
+npm run test:e2e
+npm run gauntlet:report
+npm audit
+```
 
 ## Current Capabilities
 
-- Local document vault with DOCX, PDF, text, CSV, JSON, image, and legacy DOC
-  handling.
-- Browser-side DOCX extraction through Mammoth.
-- Browser-side PDF text extraction through PDF.js.
+- DOCX, PDF, text, CSV, JSON, image, and legacy DOC handling.
+- Browser PDF extraction through PDF.js and DOCX extraction through Mammoth.
 - Local Node case-folder preloader for private folders and legacy `.doc` files.
-- Evidence cards with quote, source, exhibit, page, meaning, strategic use,
-  likely defense, counter-response, tags, priority, and confidence.
-- Search across evidence cards, source document text, detected dates/entities,
-  and missing-record rows.
-- Issue maps, contradiction map, timeline, document completeness score, and
-  source-integrity audit.
-- Live meeting mode with critical issue buttons, quote copy, question copy,
-  refusal logging, commitment logging, action items, transcript companion, and
-  source-grounded response composer.
-- Case templates for vendor/SLA, HR, medical/insurance, legal,
-  compliance, and audit workflows.
-- Agreement guard that flags vague or risky terms and generates cleaner
-  replacement language.
-- Export tools for Markdown packets, printable HTML, CSV quote indexes, exhibit
-  indexes, missing-record requests, remedy plans, meeting briefs, redacted
-  packets, and encrypted workspace JSON.
-- Local-first privacy posture: sensitive records are processed locally and are
-  not committed to this repository.
-- Verbatim extracted text is session-only and removed before browser
-  `localStorage` serialization; encrypted workspace export is the durable path.
+- Search across evidence, source text, detected dates/entities, and missing records.
+- Issue maps, contradiction views, timeline, completeness score, verification queue,
+  and source-integrity audit.
+- Case templates for vendor/SLA, HR, medical/insurance, legal, compliance, and
+  audit workflows.
+- Agreement guard for vague or risky language and cleaner replacement terms.
+- Markdown, printable HTML, CSV, exhibit, missing-record, remedy, briefing,
+  redacted, encrypted-workspace, and forensic-bundle outputs.
+- ECDSA P-256 signing-key custody, independently verifiable packet manifests, and
+  signer-fingerprint pinning.
+- Local-first privacy controls: original bytes and rendered page images can be
+  encrypted in IndexedDB; verbatim extracted text is session-only and removed
+  before browser `localStorage` serialization.
 
-## Case Folder Importer
+## Run Locally
 
-For private record folders, SourceDeck includes a local importer that builds a
-workspace JSON without uploading files to a server.
+Requirements: Node.js 24 and npm.
+
+```powershell
+npm ci
+npm run dev
+```
+
+The public app starts with fictional records and a complete worked example. No
+private case material is committed to this repository.
+
+## Private Case Folder Import
+
+The local importer builds a workspace JSON beside the selected folder without
+uploading files to a server:
 
 ```powershell
 npm run case:import -- "C:\Example Case Folder"
 ```
 
-The importer writes these files into the selected folder:
+It extracts `.docx`, legacy `.doc`, text-based `.pdf`, `.txt`, `.md`, and `.csv`.
+Image-only PDFs and chart-only documents are marked `Needs OCR`; the importer does
+not pretend those records are quote-searchable.
+
+The generated files are:
 
 - `sourcedeck-workspace.json`
 - `sourcedeck-pressure-test-report.md`
 
-The generated workspace can be imported from SourceDeck's export screen. Private
-case exports are ignored by git and should not be committed.
-
-The importer currently extracts:
-
-- `.docx` files through Mammoth
-- legacy `.doc` files through `word-extractor`
-- text-based PDFs through PDF.js
-- text-like files such as `.txt`, `.md`, and `.csv`
-
-Image-only PDFs, chart-only DOCX files, and scanned records are marked as
-`Needs OCR` so the user knows they are not quote-searchable yet.
-
-## Architecture
-
-- React 19
-- TypeScript
-- Vite
-- PDF.js for PDF text extraction
-- Mammoth for DOCX extraction
-- `word-extractor` for local legacy DOC preloading
-- Browser localStorage for the current workspace prototype
-- Session-only extracted source text plus encrypted source-byte custody in IndexedDB
-- Web Crypto PBKDF2/AES-GCM for encrypted workspace export/import
-- Vercel deployment
+Private case exports are gitignored and should never be committed.
 
 ## Local Sidecar Security
 
 The optional speech and CLI-intelligence sidecars bind to `127.0.0.1`. Browser
 operations accept only the shipped SourceDeck origin or loopback development and
-Electron origins, then require a per-process bearer capability. There is no
-wildcard CORS access. Additional exact origins can be configured through
-`SOURCEDECK_ALLOWED_ORIGINS`; see `.env.example`.
+Electron origins, then require a per-process capability. Wildcard CORS is not
+used. Additional exact origins can be configured through
+`SOURCEDECK_ALLOWED_ORIGINS`; see [`.env.example`](.env.example).
 
-These controls prevent an unrelated web page from invoking a local model command
+These controls prevent an unrelated webpage from invoking a local model command
 or reading its output. They are a browser boundary, not an operating-system
-sandbox: processes running as the same local user remain in the local trust
+sandbox: processes running as the same local user remain inside the local trust
 boundary.
 
-## Run Locally
+## Honest Current Boundaries
 
-```powershell
-npm install
-npm run dev
-```
+SourceDeck intentionally documents its unfinished edges:
 
-Build:
+- No live frontier-model runtime or OCR worker is wired in yet; those lanes are
+  typed and gated scaffolding.
+- Re-anchoring is primarily lexical, not full semantic/geometric relocation.
+- Signer trust is local/manual; there is no third-party key directory.
+- There is no collaboration, sync, account system, or multi-tenant backend.
+- Derived fields such as evidence-card quotes and meeting notes still use
+  plaintext browser `localStorage`; use a trusted browser profile and encrypted
+  export for durable private custody.
+- SourceDeck organizes a user's records and does not provide legal advice.
 
-```powershell
-npm run build
-```
-
-Lint:
-
-```powershell
-npm run lint
-```
+See [`TRUST_MODEL.md`](TRUST_MODEL.md) for the guarantee-by-guarantee boundary and
+the conditions under which a packet must be treated as unverified.
 
 ## Roadmap
 
-- OCR worker for scanned PDFs and image-only DOCX/chart files.
-- True highlighted PDF/page export with source-page overlays.
-- Human-confirmed page anchors for Word imports, because raw DOCX extraction
-  does not preserve original page layout.
-- Durable encrypted local database instead of browser localStorage.
-- Guided case-prep workflow for first-time users.
-- AI provider layer for stronger evidence extraction, contradiction detection,
-  likely defenses, and source-grounded meeting prep.
-- Collaboration/export workflow for attorney review, mediation packets, and
-  post-meeting follow-up packets.
-
-## Privacy Note
-
-The sample data in the demo is fictional. Do not commit real contract,
-medical, HR, legal, financial, or other private records to a public
-repository. SourceDeck's product direction is local-first because the target
-documents are often sensitive.
-
-The current browser prototype still persists derived workspace fields such as
-evidence-card quotes and meeting notes in plaintext `localStorage`. Use a trusted
-browser profile, reset the workspace after sensitive sessions, and use encrypted
-workspace export when durable custody is required. The full boundary is stated
-in [TRUST_MODEL.md](TRUST_MODEL.md).
+- Real OCR worker with page-image review and human-confirmed anchors.
+- Full-workspace encrypted persistence rather than derived-field `localStorage`.
+- Semantic and structural re-anchoring with relocation diagnostics.
+- Controlled collaboration and independently reviewable trust exchange.
+- Production model connectors that remain subordinate to the deterministic
+  source and privacy gates.
 
 ## Product Rule
 
 AI can prepare the deck, organize issues, suggest evidence cards, draft clean
 questions, detect contradictions, and retrieve quotes live. The human remains in
-control of what gets used in the meeting, but the AI is not artificially blocked
-from doing useful work.
+control of what gets used in the meeting, and the deterministic kernel remains in
+control of what can be called verified.
