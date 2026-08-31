@@ -1,5 +1,7 @@
 # SourceDeck
 
+[![CI](https://github.com/Xyloth/SourceDeck/actions/workflows/ci.yml/badge.svg)](https://github.com/Xyloth/SourceDeck/actions/workflows/ci.yml)
+
 SourceDeck is a local-first evidence command center for high-stakes meetings.
 It turns PDFs, Word documents, notes, and record folders into searchable
 evidence cards with exact quotes, source references, issue maps, meeting
