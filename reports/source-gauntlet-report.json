@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-17T00:13:10.790Z",
+  "generatedAt": "2026-08-31T14:25:01.012Z",
   "passed": true,
   "results": [
     {
@@ -54,19 +54,19 @@
       "id": "cryptographic_manifest_signature",
       "category": "packet_integrity",
       "passed": true,
-      "detail": "signature verified for sha256:e6130bdc736410b5312d61389f14f51b9cfb5608fd4444bd23222cab7503d363; malformed/timestamp attacks blocked"
+      "detail": "signature verified for sha256:def64004b1575cdcfb60c13ad3967915fb12f16f0c356a3e68e79da1d1285447; malformed/timestamp attacks blocked"
     },
     {
       "id": "packet_signer_trust_registry",
       "category": "packet_integrity",
       "passed": true,
-      "detail": "trusted signer accepted (13B4 EF7E 0024...); unknown signer pinned out"
+      "detail": "trusted signer accepted (B4F3 E2BC 9CB0...); unknown signer pinned out"
     },
     {
       "id": "encrypted_signing_key_custody",
       "category": "packet_integrity",
       "passed": true,
-      "detail": "wrapped custody verified for sha256:4be10d1b0ded574bdbc6b3883c6cd79aa9e1827509b6106218aa6562a0359ba1; custody hash signed and tamper blocked"
+      "detail": "wrapped custody verified for sha256:6785a3e0eb52491a567a5686afe3f5a77ba1ebc60f5a8cafc9466a517a08d717; custody hash signed and tamper blocked"
     },
     {
       "id": "kdf_iteration_bounds",
@@ -216,7 +216,7 @@
       "id": "sourcestack_forensic_bundle_tamper",
       "category": "source_integrity",
       "passed": true,
-      "detail": "bundle verified sha256:726ddc503241d323f22ef88e099eb86cf05e4c2f0c5955f18e93f7327553adf0; 1 invariant failure(s); 1 packet manifest(s); signed embedded manifest verified"
+      "detail": "bundle verified sha256:b3da07af12f8624aa02c4bd338088cffbfd8ee9a8f5f274e021cc46778bba81d; 1 invariant failure(s); 1 packet manifest(s); signed embedded manifest verified"
     },
     {
       "id": "forensic_bundle_includes_artifact_and_ledger",

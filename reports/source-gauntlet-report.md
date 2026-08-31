@@ -1,6 +1,6 @@
 # SourceStack Evidence Gauntlet Report
 
-Generated: 2026-06-17T00:13:10.790Z
+Generated: 2026-08-31T14:25:01.012Z
 Overall: PASS
 Cases: 63
 Failures: 0
@@ -25,9 +25,9 @@ Failures: 0
 | unverified_export_attempt | packet_integrity | PASS | cited card blocked |
 | duplicate_card_packet_attempt | packet_integrity | PASS | packet hard wall: selected card is duplicated |
 | hash_manifest_verification | packet_integrity | PASS | manifest verified against source graph; page drift page hashes mismatch |
-| cryptographic_manifest_signature | packet_integrity | PASS | signature verified for sha256:e6130bdc736410b5312d61389f14f51b9cfb5608fd4444bd23222cab7503d363; malformed/timestamp attacks blocked |
-| packet_signer_trust_registry | packet_integrity | PASS | trusted signer accepted (13B4 EF7E 0024...); unknown signer pinned out |
-| encrypted_signing_key_custody | packet_integrity | PASS | wrapped custody verified for sha256:4be10d1b0ded574bdbc6b3883c6cd79aa9e1827509b6106218aa6562a0359ba1; custody hash signed and tamper blocked |
+| cryptographic_manifest_signature | packet_integrity | PASS | signature verified for sha256:def64004b1575cdcfb60c13ad3967915fb12f16f0c356a3e68e79da1d1285447; malformed/timestamp attacks blocked |
+| packet_signer_trust_registry | packet_integrity | PASS | trusted signer accepted (B4F3 E2BC 9CB0...); unknown signer pinned out |
+| encrypted_signing_key_custody | packet_integrity | PASS | wrapped custody verified for sha256:6785a3e0eb52491a567a5686afe3f5a77ba1ebc60f5a8cafc9466a517a08d717; custody hash signed and tamper blocked |
 | kdf_iteration_bounds | privacy_redaction | PASS | floor enforced, ceiling enforced |
 | encrypted_signing_key_recoverable | packet_integrity | PASS | custody confirms key is recoverable; wrong passphrase rejected |
 | legacy_bridge_no_self_anchor | source_integrity | PASS | fabricated legacy quote downgraded and blocked |
@@ -52,7 +52,7 @@ Failures: 0
 | duplicate_records | source_integrity | PASS | 1 duplicate content hash bucket(s) found |
 | bitemporal_contradiction_detection | graph_logic | PASS | 1 source-span-classified contradiction(s) detected |
 | claim_issue_theory_source_chain_gate | graph_logic | PASS | packet-ready claim repeats supporting card card_verified; ready issue theory strongest path failed: packet hard wall: card is cited, not verified; ready issue theory references suggested claim claim_suggested_ready; ready issue theory support failed: packet hard wall: card is cited, not verified; ready issue theory repeats claim claim_duplicate_support; ready issue theory repeats strongest-path card card_verified; ready issue theory strongest path references missing card card_missing |
-| sourcestack_forensic_bundle_tamper | source_integrity | PASS | bundle verified sha256:726ddc503241d323f22ef88e099eb86cf05e4c2f0c5955f18e93f7327553adf0; 1 invariant failure(s); 1 packet manifest(s); signed embedded manifest verified |
+| sourcestack_forensic_bundle_tamper | source_integrity | PASS | bundle verified sha256:b3da07af12f8624aa02c4bd338088cffbfd8ee9a8f5f274e021cc46778bba81d; 1 invariant failure(s); 1 packet manifest(s); signed embedded manifest verified |
 | forensic_bundle_includes_artifact_and_ledger | source_integrity | PASS | 1 artifact(s), 3 trust event(s), 1 case artifact(s), 1 packet manifest(s), signed ledger head present, forged verification blocked, detached graph blocked, missing artifact blocked |
 | source_artifact_case_store_custody | source_integrity | PASS | case artifact artifact:sha256:c37117c86a5bb78f32d2e2dc2dacc2c94443751cb0ff187a1835269b6fbdf28c verified, alias blocked: artifact store key mismatch/artifact id content hash mismatch, tamper blocked: artifact byte length mismatch |
 | durable_artifact_payload_tamper | source_integrity | PASS | artifact byte length mismatch |
@@ -83,5 +83,5 @@ Failures: 0
 
 ## Report Hashes
 
-- Markdown body: sha256:31136b53d7cdfd42fed7402d78d9fe9fba2b20c58f53565372c1800c8b65bed9
-- JSON report: sha256:0f71da449427c56bb0df40518cff8c96114eaab60130d763deac1772d72e3056
+- Markdown body: sha256:6e17873ad517556ea4d6ac75a61f228dc51201ba7d6bb16a606307bbe0c57568
+- JSON report: sha256:9ed7e0dd5726ae1120a51614d15e38fd73eeb383bedbc1ccbd5e0d352ad214e5
